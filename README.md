@@ -1,4 +1,4 @@
-https://api.travis-ci.org/jasny/meta.svg
+![Travis CI](https://api.travis-ci.org/jasny/meta.svg)
 
 Jasny Meta
 ===
