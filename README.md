@@ -1,3 +1,5 @@
+https://api.travis-ci.org/jasny/meta.svg
+
 Jasny Meta
 ===
 
