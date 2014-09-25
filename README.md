@@ -1,7 +1,7 @@
-![Travis CI](https://api.travis-ci.org/jasny/meta.svg)
-
 Jasny Meta
 ===
+
+![Travis CI](https://api.travis-ci.org/jasny/meta.svg)
 
 The Jasny Meta library allows you to attach metadata to a class and class properties. The metadata is available at
 runtime and can be used to trigger particular behaviour.
