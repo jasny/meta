@@ -82,7 +82,7 @@ class Meta extends \ArrayObject
      * @param string                                $var
      * @return string
      */
-    protected function normalizeVar(\Reflector $refl, $var)
+    protected static function normalizeVar(\Reflector $refl, $var)
     {
         // Remove additional var info
         if (strpos($var, ' ') !== false) $var = substr($var, 0, strpos($var, ' '));
