@@ -19,15 +19,204 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         TypeCastingImpl::setType(null);
-        \PHPUnit_Framework_Error_Notice::$enabled = true;
-        
         parent::tearDown();
     }
     
     /**
-     * Test type casting for bool
+     * Test type casting to a string
      */
-    public function testBool()
+    public function testCastValueToString()
+    {
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+        
+        $obj->prop = null;
+        $obj->cast();
+        $this->assertNull($obj->prop);
+        
+        $obj->prop = '100';
+        $obj->cast();
+        $this->assertSame('100', $obj->prop);
+        
+        $obj->prop = '';
+        $obj->cast();
+        $this->assertSame('', $obj->prop);
+        
+        $obj->prop = 1;
+        $obj->cast();
+        $this->assertSame('1', $obj->prop);
+        
+        $obj->prop = true;
+        $obj->cast();
+        $this->assertSame('1', $obj->prop);
+        
+        $obj->prop = false;
+        $obj->cast();
+        $this->assertSame('', $obj->prop);
+    }
+    
+    /**
+     * Test type casting an object with `__toString` to a string
+     */
+    public function testCastValueToString_Stringable()
+    {
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+        
+        $obj->prop = new \MetaTest\FooBar();  // Implement __toString
+        $obj->cast();
+        $this->assertSame('foo', $obj->prop);
+    }
+    
+    /**
+     * Test type casting an DateTime to a string
+     */
+    public function testCastValueToString_DateTime()
+    {
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+        
+        $obj->prop = new \DateTime("2014-12-31 23:15 UTC");
+        $obj->cast();
+        $this->assertSame('2014-12-31T23:15:00+00:00', $obj->prop);
+    }
+    
+    /**
+     * Test type casting an array to a string
+     */
+    public function testCastValueToString_Array()
+    {
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast an array to a string");
+
+        $obj->prop = [10, 20];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an object to a string
+     */
+    public function testCastValueToString_Object()
+    {
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a stdClass object to a string");
+
+        $obj->prop = (object)['foo' => 'bar'];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an resource to a string
+     */
+    public function testCastValueToString_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('string');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to a string");
+
+        $obj->prop = imagecreate(10, 10);
+        $obj->cast();
+    }
+    
+    
+    /**
+     * Test type casting for boolean
+     */
+    public function testCastValueToBoolean()
+    {
+        TypeCastingImpl::setType('boolean');
+        
+        $obj = new TypeCastingImpl();
+        
+        $obj->prop = null;
+        $obj->cast();
+        $this->assertNull($obj->prop);
+
+        $obj->prop = true;
+        $obj->cast();
+        $this->assertSame(true, $obj->prop);
+        
+        $obj->prop = false;
+        $obj->cast();
+        $this->assertSame(false, $obj->prop);
+
+        foreach ([1, -1, 10, '1', 'true', 'yes', 'on'] as $value) {
+            $obj->prop = $value;
+            $obj->cast();
+            $this->assertSame(true, $obj->prop, $value);
+        }
+
+        foreach ([0, '', '0', 'false', 'no', 'off'] as $value) {
+            $obj->prop = $value;
+            $obj->cast();
+            $this->assertSame(false, $obj->prop, $value);
+        }
+    }
+    
+    /**
+     * Test type casting an array to a boolean
+     */
+    public function testCastValueToBoolean_Array()
+    {
+        TypeCastingImpl::setType('boolean');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast an array to a boolean");
+
+        $obj->prop = [10, 20];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an object to a boolean
+     */
+    public function testCastValueToBoolean_Object()
+    {
+        TypeCastingImpl::setType('boolean');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a stdClass object to a boolean");
+
+        $obj->prop = (object)['foo' => 'bar'];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an resource to a boolean
+     */
+    public function testCastValueToBoolean_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('boolean');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to a boolean");
+
+        $obj->prop = imagecreate(10, 10);
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting for bool (alias for boolean)
+     */
+    public function testCastValueToBool()
     {
         TypeCastingImpl::setType('bool');
         
@@ -48,96 +237,13 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->prop = 1;
         $obj->cast();
         $this->assertSame(true, $obj->prop);
-        
-        $obj->prop = 0;
-        $obj->cast();
-        $this->assertSame(false, $obj->prop);
-        
-        $obj->prop = 'yes';
-        $obj->cast();
-        $this->assertSame(true, $obj->prop);
-        
-        $obj->prop = '';
-        $obj->cast();
-        $this->assertSame(false, $obj->prop);
-        
-        $obj->prop = (object)['test' => 10];
-        $obj->cast();
-        $this->assertSame(true, $obj->prop);
     }
     
-    /**
-     * Test type casting for boolean
-     */
-    public function testBoolean()
-    {
-        TypeCastingImpl::setType('boolean');
-        
-        $obj = new TypeCastingImpl();
-        
-        $obj->prop = null;
-        $obj->cast();
-        $this->assertNull($obj->prop);
-        
-        $obj->prop = true;
-        $obj->cast();
-        $this->assertSame(true, $obj->prop);
-        
-        $obj->prop = false;
-        $obj->cast();
-        $this->assertSame(false, $obj->prop);
-        
-        $obj->prop = 1;
-        $obj->cast();
-        $this->assertSame(true, $obj->prop);
-    }
-    
-    /**
-     * Test type casting for int
-     */
-    public function testInt()
-    {
-        TypeCastingImpl::setType('int');
-        
-        $obj = new TypeCastingImpl();
-        
-        $obj->prop = null;
-        $obj->cast();
-        $this->assertNull($obj->prop);
-        
-        $obj->prop = 1;
-        $obj->cast();
-        $this->assertSame(1, $obj->prop);
-        
-        $obj->prop = 0;
-        $obj->cast();
-        $this->assertSame(0, $obj->prop);
-        
-        $obj->prop = 10.44;
-        $obj->cast();
-        $this->assertSame(10, $obj->prop);
-        
-        $obj->prop = true;
-        $obj->cast();
-        $this->assertSame(1, $obj->prop);
-        
-        $obj->prop = '100';
-        $obj->cast();
-        $this->assertSame(100, $obj->prop);
-        
-        $obj->prop = '100 apples';
-        $obj->cast();
-        $this->assertSame(100, $obj->prop);
-        
-        $obj->prop = '';
-        $obj->cast();
-        $this->assertSame(0, $obj->prop);
-    }
     
     /**
      * Test type casting for integer
      */
-    public function testInteger()
+    public function testCastValueToInteger()
     {
         TypeCastingImpl::setType('integer');
         
@@ -151,6 +257,95 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->cast();
         $this->assertSame(1, $obj->prop);
         
+        $obj->prop = 0;
+        $obj->cast();
+        $this->assertSame(0, $obj->prop);
+        
+        $obj->prop = 10.44;
+        $obj->cast();
+        $this->assertSame(10, $obj->prop);
+        
+        $obj->prop = true;
+        $obj->cast();
+        $this->assertSame(1, $obj->prop);
+        
+        $obj->prop = '100';
+        $obj->cast();
+        $this->assertSame(100, $obj->prop);
+        
+        $obj->prop = '-100.4';
+        $obj->cast();
+        $this->assertSame(-100, $obj->prop);
+        
+        $obj->prop = '';
+        $obj->cast();
+        $this->assertSame(0, $obj->prop);
+    }
+    
+    /**
+     * Test type casting an array to a integer
+     */
+    public function testCastValueToInteger_Array()
+    {
+        TypeCastingImpl::setType('integer');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast an array to a integer");
+
+        $obj->prop = [10, 20];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an object to a integer
+     */
+    public function testCastValueToInteger_Object()
+    {
+        TypeCastingImpl::setType('integer');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a stdClass object to a integer");
+
+        $obj->prop = (object)['foo' => 'bar'];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an resource to a integer
+     */
+    public function testCastValueToInteger_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('integer');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to a integer");
+
+        $obj->prop = imagecreate(10, 10);
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting for int (alias of integer)
+     */
+    public function testCastValueToInt()
+    {
+        TypeCastingImpl::setType('int');
+        
+        $obj = new TypeCastingImpl();
+        
+        $obj->prop = null;
+        $obj->cast();
+        $this->assertNull($obj->prop);
+        
+        $obj->prop = 1;
+        $obj->cast();
+        $this->assertSame(1, $obj->prop);
+        
         $obj->prop = 10.44;
         $obj->cast();
         $this->assertSame(10, $obj->prop);
@@ -160,56 +355,11 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(100, $obj->prop);
     }
     
-    /**
-     * Test type casting for string
-     */
-    public function testString()
-    {
-        TypeCastingImpl::setType('string');
-        
-        $obj = new TypeCastingImpl();
-        
-        $obj->prop = null;
-        $obj->cast();
-        $this->assertNull($obj->prop);
-        
-        $obj->prop = '100';
-        $obj->cast();
-        $this->assertSame('100', $obj->prop);
-        
-        $obj->prop = '100 apples';
-        $obj->cast();
-        $this->assertSame('100 apples', $obj->prop);
-        
-        $obj->prop = '';
-        $obj->cast();
-        $this->assertSame('', $obj->prop);
-        
-        $obj->prop = 1;
-        $obj->cast();
-        $this->assertSame('1', $obj->prop);
-        
-        $obj->prop = true;
-        $obj->cast();
-        $this->assertSame('1', $obj->prop);
-        
-        $obj->prop = false;
-        $obj->cast();
-        $this->assertSame('', $obj->prop);
-        
-        $obj->prop = new \MetaTest\FooBar();  // Implement __toString
-        $obj->cast();
-        $this->assertSame('foo', $obj->prop);
-        
-        $obj->prop = new \DateTime("2014-12-31 23:15 UTC");
-        $obj->cast();
-        $this->assertSame('2014-12-31T23:15:00+00:00', $obj->prop);
-    }
     
     /**
      * Test type casting for float
      */
-    public function testFloat()
+    public function testCastValueToFloat()
     {
         TypeCastingImpl::setType('float');
         
@@ -243,9 +393,9 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->cast();
         $this->assertSame(10.44, $obj->prop);
         
-        $obj->prop = '10.44 apples';
+        $obj->prop = '-10.44';
         $obj->cast();
-        $this->assertSame(10.44, $obj->prop);
+        $this->assertSame(-10.44, $obj->prop);
         
         $obj->prop = '';
         $obj->cast();
@@ -253,9 +403,57 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test type casting an array to a float
+     */
+    public function testCastValueToFloat_Array()
+    {
+        TypeCastingImpl::setType('float');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast an array to a float");
+
+        $obj->prop = [10, 20];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an object to a float
+     */
+    public function testCastValueToFloat_Object()
+    {
+        TypeCastingImpl::setType('float');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a stdClass object to a float");
+
+        $obj->prop = (object)['foo' => 'bar'];
+        $obj->cast();
+    }
+    
+    /**
+     * Test type casting an resource to a float
+     */
+    public function testCastValueToFloat_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('float');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to a float");
+
+        $obj->prop = imagecreate(10, 10);
+        $obj->cast();
+    }
+    
+    
+    /**
      * Test type casting for array
      */
-    public function testArray()
+    public function testCastValueToArray()
     {
         TypeCastingImpl::setType('array');
         
@@ -299,9 +497,28 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test type casting an resource to a array
+     */
+    public function testCastValueToArray_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('array');
+        
+        $obj = new TypeCastingImpl();
+
+        $resource = imagecreate(10, 10);
+        
+        $obj->prop = $resource;
+        $obj->cast();
+        $this->assertSame([$resource], $obj->prop);
+    }
+
+    
+    /**
      * Test type casting for object
      */
-    public function testObject()
+    public function testCastValueToObject()
     {
         TypeCastingImpl::setType('object');
         
@@ -325,27 +542,40 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->cast();
         $this->assertInternalType('object', $obj->prop);
         $this->assertEquals((object)['red' => 1, 'green' => 20, 'blue' => 300], $obj->prop);
-
-        $obj->prop = '';
-        $obj->cast();
-        $this->assertInternalType('object', $obj->prop);
-        $this->assertEquals((object)[], $obj->prop);
     }
     
     /**
      * Test the notice when type casting a scalar value to an object
      */
-    public function testObjectScalar()
+    public function testCastValueToObject_Scalar()
     {
         TypeCastingImpl::setType('object');
         
         $obj = new TypeCastingImpl();
 
-        $this->setExpectedException('PHPUnit_Framework_Error_Notice', "Casting a string to an object.");
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a string to an object");
         
         $obj->prop = 'foo';
         $obj->cast();
     }
+    
+    /**
+     * Test type casting an resource to a object
+     */
+    public function testCastValueToObject_Resource()
+    {
+        if (!function_exists('imagecreate')) $this->markTestSkipped("GD not available. Using gd resource for test.");
+        
+        TypeCastingImpl::setType('object');
+        
+        $obj = new TypeCastingImpl();
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to an object");
+
+        $obj->prop = imagecreate(10, 10);
+        $obj->cast();
+    }
+
     
     /**
      * Test type casting for DateTime
@@ -433,9 +663,9 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->cast();
         $this->assertSame(['red' => 1, 'green' => 20, 'blue' => 300], $obj->prop);
         
-        $obj->prop = ['1', '20.3', '300 apples'];
+        $obj->prop = ['1', '20.3', '-300'];
         $obj->cast();
-        $this->assertSame([1, 20, 300], $obj->prop);
+        $this->assertSame([1, 20, -300], $obj->prop);
 
         $obj->prop = 20;
         $obj->cast();
@@ -448,14 +678,6 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj->prop = '';
         $obj->cast();
         $this->assertSame([], $obj->prop);
-        
-        $obj->prop = 'foo';
-        $obj->cast();
-        $this->assertSame([0], $obj->prop);
-        
-        $obj->prop = '100, 30, 40';
-        $obj->cast();
-        $this->assertSame([100], $obj->prop);
     }
     
     /**
