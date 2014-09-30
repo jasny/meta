@@ -3,10 +3,11 @@
 namespace Jasny\Meta;
 
 /**
- * Get class meta data through annotations
+ * Get class metadata through annotations
  * 
- * @author Arnold Daniels
- * @license http://jasny.net/mit MIT
+ * @author  Arnold Daniels <arnold@jasny.net>
+ * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
+ * @link    https://jasny.github.com/meta
  */
 trait Annotations
 {

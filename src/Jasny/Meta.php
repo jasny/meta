@@ -5,8 +5,9 @@ namespace Jasny;
 /**
  * Metadata for a class, property or function
  * 
- * @author Arnold Daniels
- * @license http://jasny.net/mit MIT
+ * @author  Arnold Daniels <arnold@jasny.net>
+ * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
+ * @link    https://jasny.github.com/meta
  */
 class Meta extends \ArrayObject
 {
@@ -14,7 +15,7 @@ class Meta extends \ArrayObject
      * Meta data of class properties
      * @var array
      */
-    protected $__properties;
+    protected $properties__;
     
     /**
      * Get metadata from annotations
@@ -93,8 +94,8 @@ class Meta extends \ArrayObject
             if ($var[0] === '\\') {
                 $var = substr($var, 1);
             } else {
-                $ns = preg_replace('/[^\\\\]+$/', '', $refl->getDeclaringClass()->name);
-                $var = $ns . $var;
+                $ns = $refl->getDeclaringClass()->getNamespaceName();
+                if ($ns) $var = $ns . '\\' . $var;
             }
         }
         
@@ -149,7 +150,7 @@ class Meta extends \ArrayObject
      */
     public function __set($key, Meta $meta)
     {
-        $this->__properties[$key] = $meta;
+        $this->properties__[$key] = $meta;
     }
     
     /**
@@ -160,7 +161,7 @@ class Meta extends \ArrayObject
      */
     public function __get($key)
     {
-        return isset($this->__properties[$key]) ? $this->__properties[$key] : null;
+        return isset($this->properties__[$key]) ? $this->properties__[$key] : null;
     }
     
     /**
@@ -170,6 +171,6 @@ class Meta extends \ArrayObject
      */
     public function ofProperties()
     {
-        return $this->__properties;
+        return $this->properties__;
     }
 }

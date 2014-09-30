@@ -41,11 +41,29 @@ class FooBar
     public $bike;
     
     /**
+     * Class constructor
+     * 
+     * @param mixed $x
+     */
+    public function __construct($x = null)
+    {
+        $this->x = $x;
+    }
+    
+    /**
      * Just a test
      * 
      * @return Book
      */
     public function read()
     {
+    }
+    
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'foo';
     }
 }

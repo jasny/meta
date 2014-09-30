@@ -10,7 +10,6 @@ require_once __DIR__ . '/../support/function.php';
  * 
  * @package Test
  * @author Arnold Daniels
- * @license http://jasny.net/mit MIT
  */
 class MetaTest extends \PHPUnit_Framework_TestCase
 {
