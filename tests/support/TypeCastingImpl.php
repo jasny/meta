@@ -16,7 +16,7 @@ class TypeCastingImpl implements Introspection
     /**
      * @param string $type  Type for $this->prop
      */
-    public function setType($type)
+    public static function setType($type)
     {
         if (!isset($type)) {
             self::$meta = null;
