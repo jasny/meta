@@ -2,7 +2,7 @@
     "name": "jasny/meta",
     "type": "library",
     "description": "Define metadata for classes, properties and functions",
-    "keywords": ["meta", "annotations"],
+    "keywords": ["meta", "annotations", "type casting"],
     "license": "MIT",
     "homepage": "http://jasny.github.com/meta",
     "authors": [

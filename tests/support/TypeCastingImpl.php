@@ -6,7 +6,7 @@ namespace Jasny\Meta;
  * Implementation for TypeCasting trait
  * @ignore
  */
-class TypeCastingImpl implements Introspection
+class TypeCastingImpl implements TypedObject, Introspection
 {
     use TypeCasting;
 
