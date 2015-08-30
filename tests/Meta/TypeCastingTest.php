@@ -508,10 +508,11 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $obj = new TypeCastingImpl();
 
         $resource = imagecreate(10, 10);
+
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning', "Unable to cast a gd resource to an array");
         
         $obj->prop = $resource;
         $obj->cast();
-        $this->assertSame([$resource], $obj->prop);
     }
 
     

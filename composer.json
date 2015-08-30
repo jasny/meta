@@ -17,14 +17,15 @@
         "source": "https://github.com/jasny/meta"
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "jasny/typecast": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.2.*"
     },
     "autoload": {
-        "psr-0": {
-            "Jasny\\Meta": "src/"
+        "psr-4": {
+            "Jasny\\": "src/"
         }
     }
 }

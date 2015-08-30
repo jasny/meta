@@ -2,8 +2,8 @@
 
 namespace Jasny;
 
-require_once __DIR__ . '/../support/class.php';
-require_once __DIR__ . '/../support/function.php';
+require_once 'support/class.php';
+require_once 'support/function.php';
 
 /**
  * Tests for Jasny\Meta.

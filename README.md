@@ -1,7 +1,8 @@
 Jasny Meta
 ===
 
-![Travis CI](https://api.travis-ci.org/jasny/meta.svg)
+[![Build Status](https://travis-ci.org/jasny/meta.svg?branch=master)](https://travis-ci.org/jasny/meta)
+[![Coverage Status](https://coveralls.io/repos/jasny/meta/badge.svg?branch=master&service=github)](https://coveralls.io/github/jasny/meta?branch=master)
 
 The Jasny Meta library allows you to attach metadata to a class and class properties. The metadata is available at
 runtime and can be used to trigger particular behaviour.
