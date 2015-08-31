@@ -13,7 +13,7 @@ class Meta extends \ArrayObject
 {
     /**
      * Meta data of class properties
-     * @var array
+     * @var Meta[]
      */
     protected $properties__;
     
@@ -162,6 +162,17 @@ class Meta extends \ArrayObject
     public function __get($key)
     {
         return isset($this->properties__[$key]) ? $this->properties__[$key] : null;
+    }
+
+    /**
+     * Get the metadata of a property
+     * 
+     * @param string $property
+     * @return array
+     */
+    public function of($property)
+    {
+        return $this->__get($property);
     }
     
     /**
