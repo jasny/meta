@@ -6,7 +6,7 @@ use Jasny\TypeCast;
 
 /**
  * Cast class properties based on the meta data.
- * 
+ *
  * @author  Arnold Daniels <arnold@jasny.net>
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
@@ -15,7 +15,7 @@ trait TypeCasting
 {
     /**
      * Cast properties
-     * 
+     *
      * @return $this
      */
     public function cast()
@@ -34,7 +34,7 @@ trait TypeCasting
     
     /**
      * Cast the value to a type.
-     * 
+     *
      * @param mixed  $value
      * @param string $type
      * @return mixed
@@ -62,7 +62,7 @@ trait TypeCasting
     
     /**
      * Cast value to a string
-     * 
+     *
      * @param mixed $value
      * @return string
      */
@@ -73,7 +73,7 @@ trait TypeCasting
     
     /**
      * Cast value to a boolean
-     * 
+     *
      * @param mixed $value
      * @return boolean
      */
@@ -84,7 +84,7 @@ trait TypeCasting
     
     /**
      * Cast value to an integer
-     * 
+     *
      * @param mixed $value
      * @return int
      */
@@ -95,7 +95,7 @@ trait TypeCasting
     
     /**
      * Cast value to an integer
-     * 
+     *
      * @param mixed $value
      * @return int
      */
@@ -106,7 +106,7 @@ trait TypeCasting
 
     /**
      * Cast value to a typed array
-     * 
+     *
      * @param mixed  $value
      * @param string $subtype  Type of the array items
      * @return mixed
@@ -118,7 +118,7 @@ trait TypeCasting
     
     /**
      * Cast value to an object
-     * 
+     *
      * @param mixed $value
      * @return object
      */
@@ -129,7 +129,7 @@ trait TypeCasting
     
     /**
      * Cast value to an object
-     * 
+     *
      * @param mixed $value
      * @return object
      */
@@ -140,7 +140,7 @@ trait TypeCasting
     
     /**
      * Cast value to a non-internal type
-     * 
+     *
      * @param mixed  $value
      * @param string $class
      * @return mixed

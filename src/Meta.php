@@ -4,7 +4,7 @@ namespace Jasny;
 
 /**
  * Metadata for a class, property or function
- * 
+ *
  * @author  Arnold Daniels <arnold@jasny.net>
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
@@ -19,7 +19,7 @@ class Meta extends \ArrayObject
     
     /**
      * Get metadata from annotations
-     * 
+     *
      * @param \Reflection $refl
      * @return static
      */
@@ -40,7 +40,7 @@ class Meta extends \ArrayObject
     
     /**
      * Add metadata for properties of a class
-     * 
+     *
      * @param Meta             $meta
      * @param \ReflectionClass $refl
      */
@@ -58,7 +58,7 @@ class Meta extends \ArrayObject
     
     /**
      * Parse a docblock and extract annotations
-     * 
+     *
      * @param string $doc
      * @return array
      */
@@ -69,7 +69,10 @@ class Meta extends \ArrayObject
 
         if (preg_match_all('/^\s*(?:\/\*)?\*\s*@(\S+)(?:[ \t]+(\S.*?))?(?:\*\*\/)?$/m', $doc, $matches, PREG_PATTERN_ORDER)) {
             $keys = $matches[1];
-            $values = array_map(function ($v) { return trim($v) === '' ? true : trim($v); }, $matches[2]);
+            $values = array_map(function ($v) {
+                return trim($v) === '' ? true : trim($v);
+
+            }, $matches[2]);
             $ann += array_combine($keys, $values);
         }
         
@@ -78,7 +81,7 @@ class Meta extends \ArrayObject
     
     /**
      * Clean/Normalize var annotation gotten through reflection
-     * 
+     *
      * @param \ReflectionProperty|\ReflectionMethod $refl
      * @param string                                $var
      * @return string
@@ -105,7 +108,7 @@ class Meta extends \ArrayObject
     
     /**
      * Get metadata
-     * 
+     *
      * @param string $key
      * @return mixed
      */
@@ -116,7 +119,7 @@ class Meta extends \ArrayObject
     
     /**
      * Set metadata
-     * 
+     *
      * @param string|array $key    Key or data as associated array
      * @param mixed        $value
      */
@@ -132,7 +135,7 @@ class Meta extends \ArrayObject
     /**
      * Returns the value at the specified index
      * @link http://php.net/manual/en/arrayobject.offsetget.php
-     * 
+     *
      * @param mixed $index  The index with the value.
      * @return mixed The value at the specified index or NULL.
      */
@@ -144,7 +147,7 @@ class Meta extends \ArrayObject
     
     /**
      * Add property meta
-     * 
+     *
      * @param string $key
      * @param Meta  $meta
      */
@@ -155,7 +158,7 @@ class Meta extends \ArrayObject
     
     /**
      * Get property meta
-     * 
+     *
      * @param string $key
      * @param Meta  $meta
      */
@@ -166,7 +169,7 @@ class Meta extends \ArrayObject
 
     /**
      * Get the metadata of a property
-     * 
+     *
      * @param string $property
      * @return array
      */
@@ -177,7 +180,7 @@ class Meta extends \ArrayObject
     
     /**
      * Get the metadata of all the class properties
-     * 
+     *
      * @return array
      */
     public function ofProperties()
