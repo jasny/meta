@@ -20,11 +20,19 @@ class Meta extends \ArrayObject
     /**
      * Get metadata from annotations
      *
-     * @param \Reflection $refl
+     * @param \ReflectionClass|\ReflectionProperty|\ReflectionMethod $refl
      * @return static
      */
     public static function fromAnnotations(\Reflector $refl)
     {
+        if (
+            !$refl instanceof \ReflectionClass &&
+            !$refl instanceof \ReflectionProperty &&
+            !$refl instanceof \ReflectionMethod
+        ) {
+            throw new \LogicException("Unsupported Reflector class: " . get_class($refl));
+        }
+    
         $meta = new static(static::parseDocComment($refl->getDocComment()));
         
         if ($refl instanceof \ReflectionClass) {
@@ -88,6 +96,10 @@ class Meta extends \ArrayObject
      */
     protected static function normalizeVar(\Reflector $refl, $var)
     {
+        if (!$refl instanceof \ReflectionProperty && !$refl instanceof \ReflectionMethod) {
+            throw new \LogicException("Unsupported Reflector class: " . get_class($refl));
+        }
+    
         // Remove additional var info
         if (strpos($var, ' ') !== false) $var = substr($var, 0, strpos($var, ' '));
 
@@ -141,7 +153,7 @@ class Meta extends \ArrayObject
      */
     public function offsetGet($index)
     {
-        return parent::offsetExists($index) ? parent::offsetGet($index) : null;
+        return $this->offsetExists($index) ? parent::offsetGet($index) : null;
     }
     
     
@@ -149,7 +161,7 @@ class Meta extends \ArrayObject
      * Add property meta
      *
      * @param string $key
-     * @param Meta  $meta
+     * @param Meta   $meta
      */
     public function __set($key, Meta $meta)
     {
@@ -160,7 +172,7 @@ class Meta extends \ArrayObject
      * Get property meta
      *
      * @param string $key
-     * @param Meta  $meta
+     * @return Meta
      */
     public function __get($key)
     {
