@@ -44,20 +44,15 @@ trait TypeCasting
         if ($type === 'bool') $type = 'boolean';
         if ($type === 'int') $type = 'integer';
         
-        // No casting needed
-        if (is_null($value) || (is_object($value) && is_a($value, $type)) || gettype($value) === $type) {
-            return $value;
-        }
-        
         // Cast internal types
         if (in_array($type, ['string', 'boolean', 'integer', 'float', 'array', 'object', 'resource'])) {
-            return call_user_func([get_called_class(), 'to' . ucfirst($type)], $value);
+            return call_user_func([get_called_class(), 'castValueTo' . ucfirst($type)], $value);
         }
 
         // Cast to class
         return substr($type, -2) === '[]' ?
-            static::toArray($value, substr($type, 0, -2)) :
-            static::toClass($value, $type);
+            static::castValueToArray($value, substr($type, 0, -2)) :
+            static::castValueToClass($value, $type);
     }
     
     /**
@@ -66,7 +61,7 @@ trait TypeCasting
      * @param mixed $value
      * @return string
      */
-    protected static function toString($value)
+    protected static function castValueToString($value)
     {
         return TypeCast::toString($value);
     }
@@ -77,7 +72,7 @@ trait TypeCasting
      * @param mixed $value
      * @return boolean
      */
-    protected static function toBoolean($value)
+    protected static function castValueToBoolean($value)
     {
         return TypeCast::toBoolean($value);
     }
@@ -88,7 +83,7 @@ trait TypeCasting
      * @param mixed $value
      * @return int
      */
-    protected static function toInteger($value)
+    protected static function castValueToInteger($value)
     {
         return TypeCast::toInteger($value);
     }
@@ -99,7 +94,7 @@ trait TypeCasting
      * @param mixed $value
      * @return int
      */
-    protected static function toFloat($value)
+    protected static function castValueToFloat($value)
     {
         return TypeCast::toFloat($value);
     }
@@ -111,7 +106,7 @@ trait TypeCasting
      * @param string $subtype  Type of the array items
      * @return mixed
      */
-    protected static function toArray($value, $subtype = null)
+    protected static function castValueToArray($value, $subtype = null)
     {
         return TypeCast::toArray($value, $subtype);
     }
@@ -122,7 +117,7 @@ trait TypeCasting
      * @param mixed $value
      * @return object
      */
-    protected static function toObject($value)
+    protected static function castValueToObject($value)
     {
         return TypeCast::toObject($value);
     }
@@ -133,7 +128,7 @@ trait TypeCasting
      * @param mixed $value
      * @return object
      */
-    protected static function toResource($value)
+    protected static function castValueToResource($value)
     {
         return TypeCast::toResource($value);
     }
@@ -145,8 +140,9 @@ trait TypeCasting
      * @param string $class
      * @return mixed
      */
-    protected static function toClass($value, $class)
+    protected static function castValueToClass($value, $class)
     {
         return TypeCast::toClass($value, $class);
     }
 }
+
