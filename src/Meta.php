@@ -15,7 +15,7 @@ class Meta extends \ArrayObject
      * Meta data of class properties
      * @var Meta[]
      */
-    protected $properties__;
+    protected $properties__ = [];
     
     /**
      * Get metadata from annotations

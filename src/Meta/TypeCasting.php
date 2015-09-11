@@ -41,6 +41,8 @@ trait TypeCasting
      */
     protected static function castValue($value, $type)
     {
+        if (!isset($value)) return null;
+        
         if ($type === 'bool') $type = 'boolean';
         if ($type === 'int') $type = 'integer';
         
