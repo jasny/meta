@@ -41,8 +41,6 @@ trait TypeCasting
      */
     protected static function castValue($value, $type)
     {
-        if (!isset($value)) return null;
-        
         if ($type === 'bool') $type = 'boolean';
         if ($type === 'int') $type = 'integer';
         
@@ -110,7 +108,16 @@ trait TypeCasting
      */
     protected static function castValueToArray($value, $subtype = null)
     {
-        return TypeCast::toArray($value, $subtype);
+        if (is_null($value)) return null;
+    
+        $cast = null;
+        if (isset($subtype)) {
+            $cast = function($value) use($subtype) {
+                return static::castValue($value, $subtype);
+            };
+        }
+        
+        return TypeCast::toArray($value, $cast);
     }
     
     /**
