@@ -41,6 +41,11 @@ trait TypeCasting
      */
     protected static function castValue($value, $type)
     {
+        if ($type === 'mixed') {
+            return $value;
+        }
+        
+        if ($type === 'self' || $type === 'static') $type = get_called_class();
         if ($type === 'bool') $type = 'boolean';
         if ($type === 'int') $type = 'integer';
         
