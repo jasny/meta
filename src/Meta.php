@@ -2,6 +2,13 @@
 
 namespace Jasny;
 
+use ArrayObject;
+use Reflector;
+use ReflectionClass;
+use ReflectionProperty;
+use ReflectionMethod;
+use LogicException;
+
 /**
  * Metadata for a class, property or function
  *
@@ -9,7 +16,7 @@ namespace Jasny;
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
  */
-class Meta extends \ArrayObject
+class Meta extends ArrayObject
 {
     /**
      * Meta data of class properties
@@ -20,26 +27,26 @@ class Meta extends \ArrayObject
     /**
      * Get metadata from annotations
      *
-     * @param \ReflectionClass|\ReflectionProperty|\ReflectionMethod $refl
+     * @param ReflectionClass|ReflectionProperty|ReflectionMethod $refl
      * @return static
      */
-    public static function fromAnnotations(\Reflector $refl)
+    public static function fromAnnotations(Reflector $refl)
     {
         if (
-            !$refl instanceof \ReflectionClass &&
-            !$refl instanceof \ReflectionProperty &&
-            !$refl instanceof \ReflectionMethod
+            !$refl instanceof ReflectionClass &&
+            !$refl instanceof ReflectionProperty &&
+            !$refl instanceof ReflectionMethod
         ) {
-            throw new \LogicException("Unsupported Reflector class: " . get_class($refl));
+            throw new LogicException("Unsupported Reflector class: " . get_class($refl));
         }
     
         $meta = new static(static::parseDocComment($refl->getDocComment()));
         
-        if ($refl instanceof \ReflectionClass) {
+        if ($refl instanceof ReflectionClass) {
             static::addPropertyAnnotations($meta, $refl);
-        } elseif ($refl instanceof \ReflectionProperty) {
+        } elseif ($refl instanceof ReflectionProperty) {
             if (isset($meta['var'])) $meta['var'] = static::normalizeVar($refl, $meta['var']);
-        } elseif ($refl instanceof \ReflectionMethod) {
+        } elseif ($refl instanceof ReflectionMethod) {
             if (isset($meta['return'])) $meta['return'] = static::normalizeVar($refl, $meta['return']);
         }
         
@@ -50,11 +57,11 @@ class Meta extends \ArrayObject
      * Add metadata for properties of a class
      *
      * @param Meta             $meta
-     * @param \ReflectionClass $refl
+     * @param ReflectionClass $refl
      */
-    protected static function addPropertyAnnotations(Meta $meta, \ReflectionClass $refl)
+    protected static function addPropertyAnnotations(Meta $meta, ReflectionClass $refl)
     {
-        $props = $refl->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $props = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($props as $prop) {
             $name = $prop->getName();
@@ -90,21 +97,23 @@ class Meta extends \ArrayObject
     /**
      * Clean/Normalize var annotation gotten through reflection
      *
-     * @param \ReflectionProperty|\ReflectionMethod $refl
-     * @param string                                $var
+     * @param ReflectionProperty|ReflectionMethod $refl
+     * @param string                              $var
      * @return string
      */
-    protected static function normalizeVar(\Reflector $refl, $var)
+    protected static function normalizeVar(Reflector $refl, $var)
     {
-        if (!$refl instanceof \ReflectionProperty && !$refl instanceof \ReflectionMethod) {
-            throw new \LogicException("Unsupported Reflector class: " . get_class($refl));
+        if (!$refl instanceof ReflectionProperty && !$refl instanceof ReflectionMethod) {
+            throw new LogicException("Unsupported Reflector class: " . get_class($refl));
         }
     
         // Remove additional var info
         if (strpos($var, ' ') !== false) $var = substr($var, 0, strpos($var, ' '));
 
         // Normalize call types to global namespace
-        $internalTypes = ['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object'];
+        $internalTypes = ['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object', 'resource',
+            'mixed', 'self', 'static', '$this'];
+        
         if (isset($var) && !in_array($var, $internalTypes)) {
             if ($var[0] === '\\') {
                 $var = substr($var, 1);
@@ -146,7 +155,7 @@ class Meta extends \ArrayObject
     
     /**
      * Returns the value at the specified index
-     * @link http://php.net/manual/en/arrayobject.offsetget.php
+     * @see http://php.net/manual/en/arrayobject.offsetget.php
      *
      * @param mixed $index  The index with the value.
      * @return mixed The value at the specified index or NULL.
@@ -180,12 +189,23 @@ class Meta extends \ArrayObject
     }
 
     /**
+     * @see Meta::ofProperty()
+     *
+     * @param string $property
+     * @return array
+     */
+    final public function of($property)
+    {
+        return $this->ofProperty($property);
+    }
+
+    /**
      * Get the metadata of a property
      *
      * @param string $property
      * @return array
      */
-    public function of($property)
+    public function ofProperty($property)
     {
         return $this->__get($property);
     }
