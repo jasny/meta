@@ -82,7 +82,9 @@ class Meta extends ArrayObject
         $ann = [];
         $matches = null;
 
-        if (preg_match_all('/^\s*(?:\/\*)?\*\s*@(\S+)(?:[ \t]+(\S.*?))?(?:\*\*\/)?$/m', $doc, $matches, PREG_PATTERN_ORDER)) {
+        $regex = '/^\s*(?:\/\*)?\*\s*@(\S+)(?:[ \t]+(\S.*?))?(?:\*\*\/)?$/m';
+        
+        if (preg_match_all($regex, $doc, $matches, PREG_PATTERN_ORDER)) {
             $keys = $matches[1];
             $values = array_map(function ($v) {
                 return trim($v) === '' ? true : trim($v);
@@ -114,13 +116,15 @@ class Meta extends ArrayObject
         $internalTypes = ['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object', 'resource',
             'mixed', 'self', 'static', '$this'];
         
-        if (isset($var) && !in_array($var, $internalTypes)) {
-            if ($var[0] === '\\') {
-                $var = substr($var, 1);
-            } else {
-                $ns = $refl->getDeclaringClass()->getNamespaceName();
-                if ($ns) $var = $ns . '\\' . $var;
-            }
+        if (!isset($var) || in_array($var, $internalTypes)) {
+            return $var;
+        }
+        
+        if ($var[0] === '\\') {
+            $var = substr($var, 1);
+        } else {
+            $ns = $refl->getDeclaringClass()->getNamespaceName();
+            if ($ns) $var = $ns . '\\' . $var;
         }
         
         return $var;
