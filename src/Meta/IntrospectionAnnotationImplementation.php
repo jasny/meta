@@ -9,7 +9,7 @@ namespace Jasny\Meta;
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
  */
-trait Annotations
+trait IntrospectionAnnotationImplementation
 {
     /**
      * Get metadata

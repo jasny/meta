@@ -6,9 +6,9 @@ namespace Jasny\Meta;
  * Implementation for TypeCasting trait
  * @ignore
  */
-class TypeCastingImpl implements TypedObject, Introspection
+class TypeCastingObject implements TypeCasting, Introspection
 {
-    use TypeCasting;
+    use TypeCastingImplementation;
 
     private static $meta;
     public $prop;

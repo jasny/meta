@@ -22,7 +22,7 @@ class Meta extends ArrayObject
      * Meta data of class properties
      * @var Meta[]
      */
-    protected $properties__ = [];
+    protected $properties = [];
     
     /**
      * Get metadata from annotations
@@ -61,13 +61,11 @@ class Meta extends ArrayObject
      */
     protected static function addPropertyAnnotations(Meta $meta, ReflectionClass $refl)
     {
-        $props = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
+        $props = $refl->getProperties();
 
         foreach ($props as $prop) {
             $name = $prop->getName();
-            $ann = static::fromAnnotations($prop);
-            
-            $meta->$name = $ann;
+            $meta->properties[$name] = $prop->isPublic() ? static::fromAnnotations($prop) : null;
         }
     }
     
@@ -169,49 +167,21 @@ class Meta extends ArrayObject
         return $this->offsetExists($index) ? parent::offsetGet($index) : null;
     }
     
-    
-    /**
-     * Add property meta
-     *
-     * @param string $key
-     * @param Meta   $meta
-     */
-    public function __set($key, Meta $meta)
-    {
-        $this->properties__[$key] = $meta;
-    }
-    
-    /**
-     * Get property meta
-     *
-     * @param string $key
-     * @return Meta
-     */
-    public function __get($key)
-    {
-        return isset($this->properties__[$key]) ? $this->properties__[$key] : null;
-    }
 
     /**
-     * @see Meta::ofProperty()
+     * Get the metadata of a property.
+     * Will return null for a private or protected property
      *
      * @param string $property
-     * @return array
-     */
-    final public function of($property)
-    {
-        return $this->ofProperty($property);
-    }
-
-    /**
-     * Get the metadata of a property
-     *
-     * @param string $property
-     * @return array
+     * @return array|null
      */
     public function ofProperty($property)
     {
-        return $this->__get($property);
+        if (!array_key_exists($property, $this->properties)) {
+            $this->properties[$property] = new Meta();
+        }
+        
+        return $this->properties[$property];
     }
     
     /**
@@ -221,6 +191,6 @@ class Meta extends ArrayObject
      */
     public function ofProperties()
     {
-        return $this->properties__;
+        return $this->properties;
     }
 }
