@@ -24,7 +24,7 @@ class TypeCastingObject implements TypeCasting, Introspection
         }
         
         self::$meta = new \Jasny\Meta();
-        self::$meta->prop = new \Jasny\Meta(['var' => $type]);
+        self::$meta->ofProperty('prop')['var'] = $type;
     }
     
     /**
