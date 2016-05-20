@@ -3,7 +3,6 @@
 namespace Jasny;
 
 use ArrayObject;
-use Reflector;
 
 use Jasny\Meta\Factory;
 use Jasny\Meta\Cache;
@@ -112,51 +111,6 @@ class Meta extends ArrayObject
         }
     }
     
-    
-    /**
-     * Create metadata using a reflector
-     *
-     * @param \ReflectionClass|\ReflectionProperty|\ReflectionMethod $refl
-     * @return Meta
-     */
-    final public static function from(Reflector $refl)
-    {
-        if ($refl instanceof \ReflectionClass && self::cache()->has($refl->getName() . '::meta')) {
-            return self::cache()->get($refl->getName() . '::meta');
-        }
-        
-        $meta = self::factory()->create($refl);
-        
-        if ($refl instanceof \ReflectionClass) {
-            self::cache()->set($refl->getName() . '::meta', $meta);
-        }
-        
-        return $meta;
-    }
-    
-    /**
-     * Get the meta factory
-     * 
-     * @return Factory
-     */
-    final public static function factory()
-    {
-        if (!isset(static::$factory)) {
-            static::useFactory(new Factory\Annotations());
-        }
-        
-        return static::$factory;
-    }
-    
-    /**
-     * Use the specified factory
-     * 
-     * @param Factory $factory
-     */
-    final public static function useFactory(Factory $factory)
-    {
-        static::$factory = $factory;
-    }
     
     /**
      * Get the cache interface

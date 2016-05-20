@@ -2,6 +2,8 @@
 
 namespace Jasny\Meta;
 
+use Jasny\Meta\Test\FooBar;
+
 /**
  * Tests for Jasny\Meta\TypeCasting.
  * 
@@ -62,7 +64,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         
         $obj = new TypeCastingObject();
         
-        $obj->prop = new \MetaTest\FooBar();  // Implement __toString
+        $obj->prop = new FooBar();  // Implement __toString
         $obj->cast();
         $this->assertSame('foo', $obj->prop);
     }
@@ -614,7 +616,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
      */
     public function testClass()
     {
-        TypeCastingObject::setType('MetaTest\FooBar');
+        TypeCastingObject::setType(FooBar::class);
         
         $obj = new TypeCastingObject();
         
@@ -624,7 +626,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
 
         $obj->prop = 22;
         $obj->cast();
-        $this->assertInstanceOf('MetaTest\FooBar', $obj->prop);
+        $this->assertInstanceOf(FooBar::class, $obj->prop);
         $this->assertSame(22, $obj->prop->x);
     }
     
@@ -699,7 +701,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
      */
     public function testTypedArrayOfClass()
     {
-        TypeCastingObject::setType('MetaTest\FooBar[]');
+        TypeCastingObject::setType(FooBar::class . '[]');
         
         $obj = new TypeCastingObject();
         
@@ -721,7 +723,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $obj->prop);
         foreach ([1, 20, 300] as $key => $value) {
             $this->assertArrayHasKey($key, $obj->prop);
-            $this->assertInstanceOf('MetaTest\FooBar', $obj->prop[$key]);
+            $this->assertInstanceOf(FooBar::class, $obj->prop[$key]);
             $this->assertSame($value, $obj->prop[$key]->x);
         }
 
@@ -731,7 +733,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $obj->prop);
         foreach (['red' => 1, 'green' => 20, 'blue' => 300] as $key => $value) {
             $this->assertArrayHasKey($key, $obj->prop);
-            $this->assertInstanceOf('MetaTest\FooBar', $obj->prop[$key]);
+            $this->assertInstanceOf(FooBar::class, $obj->prop[$key]);
             $this->assertSame($value, $obj->prop[$key]->x);
         }
         
@@ -740,7 +742,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $obj->prop);
         $this->assertCount(1, $obj->prop);
         $this->assertArrayHasKey(0, $obj->prop);
-        $this->assertInstanceOf('MetaTest\FooBar', $obj->prop[0]);
+        $this->assertInstanceOf(FooBar::class, $obj->prop[0]);
         $this->assertSame(20, $obj->prop[0]->x);
     }
 }

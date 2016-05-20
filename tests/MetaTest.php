@@ -3,6 +3,9 @@
 namespace Jasny;
 
 use Jasny\Meta;
+use Jasny\Meta\Factory;
+use Jasny\Meta\Cache;
+use Jasny\Meta\Test\FooBar;
 
 /**
  * Tests for Jasny\Meta.
@@ -12,22 +15,18 @@ use Jasny\Meta;
  */
 class MetaTest extends \PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass()
+    protected function createMeta(\Reflector $refl)
     {
-        Meta::useCache(new Meta\Cache\None()); // Don't cache
-    }
-
-    public static function tearDownAfterClass()
-    {
-        Meta::useCache(new Meta\Cache\Simple()); // Reset and default behaviour
+        $factory = new Factory\Annotations();
+        return $factory->create($refl);
     }
 
     /**
-     * Test Meta::from() for a class
+     * Test $this->createMeta() for a class
      */
     public function testFromAnnotationsForClass()
     {
-        $meta = Meta::from(new \ReflectionClass('MetaTest\FooBar'));
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
         $this->assertInstanceOf(Meta::class, $meta);
         
         $this->assertSame(true, $meta['foo']);
@@ -46,17 +45,17 @@ class MetaTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * Test Meta::from() for a property
+     * Test $this->createMeta() for a property
      */
     public function testFromAnnotationsForProperty()
     {
-        $metaX = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'x'));
+        $metaX = $this->createMeta(new \ReflectionProperty(FooBar::class, 'x'));
         $this->assertInstanceOf(Meta::class, $metaX);
         $this->assertSame('float', $metaX['var']);
         $this->assertSame('123', $metaX['test']);
         $this->assertSame(true, $metaX['required']);
         
-        $metaY = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'y'));
+        $metaY = $this->createMeta(new \ReflectionProperty(FooBar::class, 'y'));
         $this->assertInstanceOf(Meta::class, $metaY);
         $this->assertSame('int', $metaY['var']);
     }
@@ -66,13 +65,13 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testNormalizeVarForProprety()
     {
-        $metaBall = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'ball'));
+        $metaBall = $this->createMeta(new \ReflectionProperty(FooBar::class, 'ball'));
         $this->assertInstanceOf(Meta::class, $metaBall);
         $this->assertSame('Ball', $metaBall['var']);
         
-        $metaBike = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'bike'));
+        $metaBike = $this->createMeta(new \ReflectionProperty(FooBar::class, 'bike'));
         $this->assertInstanceOf(Meta::class, $metaBike);
-        $this->assertSame('MetaTest\Bike', $metaBike['var']);
+        $this->assertSame('Jasny\Meta\Test\Bike', $metaBike['var']);
     }
 
     /**
@@ -80,15 +79,15 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessForProprety()
     {
-        $metaBall = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'ball'));
+        $metaBall = $this->createMeta(new \ReflectionProperty(FooBar::class, 'ball'));
         $this->assertInstanceOf(Meta::class, $metaBall);
         $this->assertSame('public', $metaBall['access']);
         
-        $metaNo = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'no'));
+        $metaNo = $this->createMeta(new \ReflectionProperty(FooBar::class, 'no'));
         $this->assertInstanceOf(Meta::class, $metaNo);
         $this->assertSame('protected', $metaNo['access']);
         
-        $metaBike = Meta::from(new \ReflectionProperty('MetaTest\FooBar', 'bike'));
+        $metaBike = $this->createMeta(new \ReflectionProperty(FooBar::class, 'bike'));
         $this->assertInstanceOf(Meta::class, $metaBike);
         $this->assertSame('private', $metaBike['access']);
     }
@@ -98,9 +97,9 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testNormalizeVarForMethod()
     {
-        $meta = Meta::from(new \ReflectionMethod('MetaTest\FooBar', 'read'));
+        $meta = $this->createMeta(new \ReflectionMethod(FooBar::class, 'read'));
         $this->assertInstanceOf(Meta::class, $meta);
-        $this->assertSame('MetaTest\Book', $meta['return']);
+        $this->assertSame('Jasny\Meta\Test\Book', $meta['return']);
     }
     
     
@@ -111,7 +110,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet()
     {
-        $meta = Meta::from(new \ReflectionClass('MetaTest\FooBar'));
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
         
         $this->assertSame(true, $meta->get('foo'));
         $this->assertSame("Hello world", $meta->get('bar'));
@@ -125,7 +124,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetNop()
     {
-        $meta = Meta::from(new \ReflectionClass('MetaTest\FooBar'));
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
         
         $this->assertNull($meta['nop']);
         $this->assertNull($meta->get('nop'));
@@ -138,7 +137,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testSet()
     {
-        $meta = Meta::from(new \ReflectionClass('MetaTest\FooBar'));
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
         
         $meta->set('foo', false);
         $this->assertSame(false, $meta['foo']);
@@ -161,7 +160,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testOfProperties()
     {
-        $meta = Meta::from(new \ReflectionClass('MetaTest\FooBar'));
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
         $props = $meta->ofProperties();
         
         $this->assertArrayHasKey('x', $props);
@@ -180,5 +179,38 @@ class MetaTest extends \PHPUnit_Framework_TestCase
         
         $this->assertSame($meta->ofProperty('x'), $props['x']);
         $this->assertSame($meta->ofProperty('y'), $props['y']);
+    }
+    
+    
+    public function testClone()
+    {
+        $meta = $this->createMeta(new \ReflectionClass(FooBar::class));
+        
+        $clone = clone $meta;
+        
+        $this->assertEquals($meta->ofProperty('x'), $clone->ofProperty('x'));
+        $this->assertNotSame($meta->ofProperty('x'), $clone->ofProperty('x'));
+    }
+    
+    
+    public function testDefaultCache()
+    {
+        $this->assertInstanceOf(Cache\Simple::class, Meta::cache());
+    }
+    
+    public function testUseCache()
+    {
+        $cache = new Cache\Simple();
+        Meta::useCache($cache);
+        
+        $this->assertSame($cache, Meta::cache());
+    }
+    
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testUseCacheInvalidArgument()
+    {
+        Meta::useCache(new \stdClass());
     }
 }

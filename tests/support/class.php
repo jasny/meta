@@ -1,6 +1,8 @@
 <?php
 
-namespace MetaTest;
+namespace Jasny\Meta\Test;
+
+use Jasny\Meta\Introspection;
 
 /**
  * A test class.
@@ -10,8 +12,10 @@ namespace MetaTest;
  * @bar  Hello world
  * @blue 22
  */
-class FooBar
+class FooBar implements Introspection
 {
+    use Introspection\AnnotationsImplementation;
+    
     /**
      * The X is here
      * 
