@@ -44,7 +44,7 @@ class Annotations implements Factory
         
         $this->cache = $cache;
     }
-    
+
     /**
      * Cache meta
      * 
@@ -56,6 +56,19 @@ class Annotations implements Factory
         if (!$refl instanceof ReflectionClass) return;
         
         $this->cache->set($refl->getName() . '::meta', $meta);
+    }
+    
+    /**
+     * Get metadata from cache
+     * 
+     * @param Reflector $refl
+     * @return Meta
+     */
+    public function getFromCache(Reflector $refl)
+    {
+        return $refl instanceof ReflectionClass
+            ? $this->cache->get($refl->getName() . '::meta')
+            : null;
     }
     
     /**
@@ -78,6 +91,11 @@ class Annotations implements Factory
      */
     public function create(Reflector $refl)
     {
+        $meta = $this->getFromCache($refl);
+        if (isset($meta)) {
+            return $meta;
+        }
+        
         if ($refl instanceof ReflectionClass) {
             $meta = $this->createForClass($refl);
         } elseif ($refl instanceof ReflectionProperty) {
