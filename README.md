@@ -2,7 +2,7 @@ Jasny Meta
 ===
 
 [![Build Status](https://travis-ci.org/jasny/meta.svg?branch=master)](https://travis-ci.org/jasny/meta)
-[![Coverage Status](https://coveralls.io/repos/jasny/meta/badge.svg?branch=master&service=github)](https://coveralls.io/github/jasny/meta?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jasny/meta/badge.svg?branch=master)](https://coveralls.io/github/jasny/meta?branch=master)
 
 The Jasny Meta library allows you to attach metadata to a class and class properties. The metadata is available at
 runtime and can be used to trigger particular behaviour.
@@ -19,17 +19,27 @@ composer:
 Annotations
 ---
 
-The default way of specifying metadata is through annotations. In PHP annotations are written in the docblock and start
+Metadata can be specified through annotations. In PHP annotations are written in the docblock and start
 with `@`. If you're familiar with writing docblocks, you probably recognize them.
 
+The `Jasny\Meta\Introspection\AnnotationsImplementation` [trait](http://php.net/manual/en/language.oop5.traits.php) adds a static method `meta()` to your class, which returns the parsed annotations as metadata.
+
+Implement the `Jasny\Meta\Introspection` [interface](http://php.net/manual/en/language.oop5.interfaces.php) to indicate
+that the class has accessable metadata through the `meta()` method.
+
 ```php
+use Jasny\Meta\Introspection;
+
 /**
  * A system user
  *
+ * @represents A person or organization
  * @softdelete
  */
-class User
+class User implements Jasny\Meta\Introspection
 {
+    use Introspection\AnnotationsImplementation;
+
     /**
      * The user's e-mail address.
      *
@@ -38,35 +48,15 @@ class User
      * @required
      */
     public $website;
+    
+    ..
 }
 
-$refl = new ReflectionClass('User');
-$meta = Jasny\Meta($refl);
-echo $meta->email['type'];  // url
-```
+echo User::meta()['represents'];                  // A person or organization
+echo User::meta()['softdelete'] ? 'yes' : 'no';   // yes
+echo User::meta()['lazy'] ? 'yes' : 'no';         // no
 
-#### Introspection
-
-The `Jasny\Meta\Annotations` [trait](http://php.net/manual/en/language.oop5.traits.php) adds a static method `meta()` to
-your class, which returns the parsed annotations as metadata.
-
-Implement the `Jasny\Meta\Introspection` [interface](http://php.net/manual/en/language.oop5.interfaces.php) to indicate
-that the class has accessable metadata through the `meta()` method.
-
-```php
-/**
- * A system user
- *
- * @softdelete
- */
-class User implements Jasny\Meta\Introspection
-{
-    use Jasny\Meta\Annotations;
-
-    ...
-}
-
-echo User::meta()->email['type'];  // url
+echo User::meta()->ofProperty('website')['var'];  // string
 ```
 
 
@@ -94,13 +84,13 @@ User::meta()->set(array $values);
 
 #### Class properties
 
-metadata of class properties are available as properties of the of the Meta object or through the `getProperty()`
-method.
+metadata of class properties are available as properties of the of the Meta object or through the `ofProperty()`
+method. To get the meta of all properties use the `ofProperties()` method.
 
 ```php
-User::meta()->email['required']
-User::meta()->email->get('required')
-User::meta()->ofProperties() // Get metadata of all class properties
+User::meta()->ofProperty('email')['required'];
+User::meta()->ofProperty('email')->get('required');
+User::meta()->ofProperties(); // Get metadata of all class properties
 ```
 
 
@@ -125,23 +115,6 @@ class User implements Jasny\Meta\Introspection
      */
     public static funciton meta()
     {
-        $refl = new \ReflectionClass(get_called_class());
-        $meta = Jasny\Meta::fromAnnotations($refl);
-        
-        $meta->set(['abc' => 10, 'def' => 20]);
-        
-        return $meta;
-    }
-}
-```
-
-If you don't want to use annotations at all simple create a new `Jasny\Meta` class.
-
-```php
-class User implements Jasny\Meta\Introspection
-{
-    public static funciton meta()
-    {
         return new Jasny\Meta(['abc' => 10, 'def' => 20]);
     }
 }
@@ -150,14 +123,4 @@ class User implements Jasny\Meta\Introspection
 Todo
 ---
 
-* Support complex structures through alternative formats
-```php
-/** @Foo */
-/** @Foo("some") */
-/** @Foo some other strings */
-/** @Foo(some_label="something here") */
-/** @Foo({some: "array here", arr:[1,2,3]}) */
-/** @Foo(some_label={some: "array here", arr:[1,2,3]}) */
-```
-* Add caching
 * Support multiple annotations with the same key (eg @param)
