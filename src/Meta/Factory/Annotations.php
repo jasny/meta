@@ -4,7 +4,6 @@ namespace Jasny\Meta\Factory;
 
 use Jasny\Meta;
 use Jasny\Meta\Factory;
-use Jasny\Meta\Cache;
 
 use Reflector;
 use ReflectionClass;
@@ -17,60 +16,6 @@ use InvalidArgumentException;
  */
 class Annotations implements Factory
 {
-    /**
-     * Caching
-     * @var Cache|\Desarrolla2\Cache\Cache
-     */
-    protected $cache;
-    
-    /**
-     * Class constructor
-     */
-    public function __construct()
-    {
-        $this->cache = new Cache\Simple();
-    }
-    
-    /**
-     * Set cache interface
-     * 
-     * @param Cache|\Desarrolla2\Cache\Cache $cache
-     */
-    public function useCache($cache)
-    {
-        if (!$cache instanceof Cache && !$cache instanceof \Desarrolla2\Cache\Cache) {
-            throw new \InvalidArgumentException("Cache should be Jasny\DB\Meta\Cache or Desarrolla2\Cache\Cache");
-        }
-        
-        $this->cache = $cache;
-    }
-
-    /**
-     * Cache meta
-     * 
-     * @param Reflector $refl
-     * @param Meta      $meta
-     */
-    public function cache(Reflector $refl, Meta $meta)
-    {
-        if (!$refl instanceof ReflectionClass) return;
-        
-        $this->cache->set($refl->getName() . '::meta', $meta);
-    }
-    
-    /**
-     * Get metadata from cache
-     * 
-     * @param Reflector $refl
-     * @return Meta
-     */
-    public function getFromCache(Reflector $refl)
-    {
-        return $refl instanceof ReflectionClass
-            ? $this->cache->get($refl->getName() . '::meta')
-            : null;
-    }
-    
     /**
      * Create Meta object from doc comment
      * 
@@ -91,11 +36,6 @@ class Annotations implements Factory
      */
     public function create(Reflector $refl)
     {
-        $meta = $this->getFromCache($refl);
-        if (isset($meta)) {
-            return $meta;
-        }
-        
         if ($refl instanceof ReflectionClass) {
             $meta = $this->createForClass($refl);
         } elseif ($refl instanceof ReflectionProperty) {
@@ -105,8 +45,6 @@ class Annotations implements Factory
         } else {
             throw new \InvalidArgumentException("Unsupported Reflector class: " . get_class($refl));
         }
-        
-        $this->cache($refl, $meta);
         
         return $meta;
     }

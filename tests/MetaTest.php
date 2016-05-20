@@ -12,6 +12,16 @@ use Jasny\Meta;
  */
 class MetaTest extends \PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Meta::useCache(new Meta\Cache\None()); // Don't cache
+    }
+
+    public static function tearDownAfterClass()
+    {
+        Meta::useCache(new Meta\Cache\Simple()); // Reset and default behaviour
+    }
+
     /**
      * Test Meta::from() for a class
      */

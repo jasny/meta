@@ -24,10 +24,21 @@ class None implements Cache
      * Nothing is cached
      * 
      * @param string $key
-     * @return Meta|null
+     * @return null
      */
     public function get($key)
     {
         return null;
+    }
+    
+    /**
+     * No, it's not cached
+     * 
+     * @param string $key
+     * @return false
+     */
+    public function has($key)
+    {
+        return false;
     }
 }

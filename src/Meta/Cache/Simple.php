@@ -36,4 +36,15 @@ class Simple implements Cache
     {
         return isset($this->cache[$key]) ? $this->cache[$key] : null;
     }
+    
+    /**
+     * Check if meta exists in cache
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key)
+    {
+        return isset($this->cache[$key]);
+    }
 }

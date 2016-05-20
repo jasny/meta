@@ -24,4 +24,12 @@ interface Cache
      * @return Meta|null
      */
     public function get($key);
+    
+    /**
+     * Check if meta exists in cache
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key);
 }
