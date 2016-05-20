@@ -1,6 +1,6 @@
 <?php
 
-namespace Jasny\Meta;
+namespace Jasny\Meta\TypeCasting;
 
 use Jasny\TypeCast;
 
@@ -11,7 +11,7 @@ use Jasny\TypeCast;
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
  */
-trait TypeCastingImplementation
+trait Implementation
 {
     /**
      * Get type cast object

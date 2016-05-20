@@ -25,7 +25,6 @@ class FooBar
     public $y;
     
     /**
-     * Should not be in here
      * @var string
      */
     protected $no;
@@ -37,6 +36,7 @@ class FooBar
     
     /**
      * @var Bike
+     * @access private
      */
     public $bike;
     

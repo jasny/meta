@@ -2,6 +2,9 @@
 
 namespace Jasny\Meta;
 
+use ReflectionClass;
+use Jasny\Meta;
+
 /**
  * Get class metadata through annotations
  *
@@ -9,16 +12,16 @@ namespace Jasny\Meta;
  * @license https://raw.github.com/jasny/meta/master/LICENSE MIT
  * @link    https://jasny.github.com/meta
  */
-trait IntrospectionAnnotationImplementation
+trait IntrospectionImplementation
 {
     /**
      * Get metadata
      *
-     * @return \Jasny\Meta
+     * @return Meta
      */
     public static function meta()
     {
-        $refl = new \ReflectionClass(get_called_class());
-        return \Jasny\Meta::fromAnnotations($refl);
+        $refl = new ReflectionClass(get_called_class());
+        return Meta::from($refl);
     }
 }

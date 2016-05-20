@@ -4,10 +4,7 @@ namespace Jasny;
 
 use ArrayObject;
 use Reflector;
-use ReflectionClass;
-use ReflectionProperty;
-use ReflectionMethod;
-use LogicException;
+use Jasny\Meta\Factory;
 
 /**
  * Metadata for a class, property or function
@@ -19,114 +16,16 @@ use LogicException;
 class Meta extends ArrayObject
 {
     /**
+     * Meta factory
+     * @var Factory
+     */
+    protected static $factory;
+    
+    /**
      * Meta data of class properties
      * @var Meta[]
      */
     protected $properties = [];
-    
-    /**
-     * Get metadata from annotations
-     *
-     * @param ReflectionClass|ReflectionProperty|ReflectionMethod $refl
-     * @return static
-     */
-    public static function fromAnnotations(Reflector $refl)
-    {
-        if (
-            !$refl instanceof ReflectionClass &&
-            !$refl instanceof ReflectionProperty &&
-            !$refl instanceof ReflectionMethod
-        ) {
-            throw new LogicException("Unsupported Reflector class: " . get_class($refl));
-        }
-    
-        $meta = new static(static::parseDocComment($refl->getDocComment()));
-        
-        if ($refl instanceof ReflectionClass) {
-            static::addPropertyAnnotations($meta, $refl);
-        } elseif ($refl instanceof ReflectionProperty) {
-            if (isset($meta['var'])) $meta['var'] = static::normalizeVar($refl, $meta['var']);
-        } elseif ($refl instanceof ReflectionMethod) {
-            if (isset($meta['return'])) $meta['return'] = static::normalizeVar($refl, $meta['return']);
-        }
-        
-        return $meta;
-    }
-    
-    /**
-     * Add metadata for properties of a class
-     *
-     * @param Meta             $meta
-     * @param ReflectionClass $refl
-     */
-    protected static function addPropertyAnnotations(Meta $meta, ReflectionClass $refl)
-    {
-        $props = $refl->getProperties();
-
-        foreach ($props as $prop) {
-            $name = $prop->getName();
-            $meta->properties[$name] = $prop->isPublic() ? static::fromAnnotations($prop) : null;
-        }
-    }
-    
-    /**
-     * Parse a docblock and extract annotations
-     *
-     * @param string $doc
-     * @return array
-     */
-    protected static function parseDocComment($doc)
-    {
-        $ann = [];
-        $matches = null;
-
-        $regex = '/^\s*(?:\/\*)?\*\s*@(\S+)(?:[ \t]+(\S.*?))?(?:\*\*\/)?$/m';
-        
-        if (preg_match_all($regex, $doc, $matches, PREG_PATTERN_ORDER)) {
-            $keys = $matches[1];
-            $values = array_map(function ($v) {
-                return trim($v) === '' ? true : trim($v);
-
-            }, $matches[2]);
-            $ann += array_combine($keys, $values);
-        }
-        
-        return $ann;
-    }
-    
-    /**
-     * Clean/Normalize var annotation gotten through reflection
-     *
-     * @param ReflectionProperty|ReflectionMethod $refl
-     * @param string                              $var
-     * @return string
-     */
-    protected static function normalizeVar(Reflector $refl, $var)
-    {
-        if (!$refl instanceof ReflectionProperty && !$refl instanceof ReflectionMethod) {
-            throw new LogicException("Unsupported Reflector class: " . get_class($refl));
-        }
-    
-        // Remove additional var info
-        if (strpos($var, ' ') !== false) $var = substr($var, 0, strpos($var, ' '));
-
-        // Normalize call types to global namespace
-        $internalTypes = ['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object', 'resource',
-            'mixed', 'self', 'static', '$this'];
-        
-        if (!isset($var) || in_array($var, $internalTypes)) {
-            return $var;
-        }
-        
-        if ($var[0] === '\\') {
-            $var = substr($var, 1);
-        } else {
-            $ns = $refl->getDeclaringClass()->getNamespaceName();
-            if ($ns) $var = $ns . '\\' . $var;
-        }
-        
-        return $var;
-    }
     
     
     /**
@@ -148,7 +47,7 @@ class Meta extends ArrayObject
      */
     public function set($key, $value = null)
     {
-        $values = is_array($key) ? $key : [$key => $value];
+        $values = is_string($key) ? [$key => $value] : $key;
         
         foreach ($values as $key => $value) {
             $this->offsetSet($key, $value);
@@ -192,5 +91,51 @@ class Meta extends ArrayObject
     public function ofProperties()
     {
         return $this->properties;
+    }
+    
+    /**
+     * Deep cloning
+     */
+    public function __clone()
+    {
+        foreach ($this->properties as &$property) {
+            $property = clone $property;
+        }
+    }
+    
+    
+    /**
+     * Create metadata using a reflector
+     *
+     * @param \ReflectionClass|\ReflectionProperty|\ReflectionMethod $refl
+     * @return Meta
+     */
+    final public static function from(Reflector $refl)
+    {
+        return self::factory()->create($refl);
+    }
+    
+    /**
+     * Get the meta factory
+     * 
+     * @return Factory
+     */
+    final public static function factory()
+    {
+        if (!isset(static::$factory)) {
+            static::$factory = new Factory\Annotations();
+        }
+        
+        return static::$factory;
+    }
+    
+    /**
+     * Use the specified factory
+     * 
+     * @param Factory $factory
+     */
+    final public static function useFactory(Factory $factory)
+    {
+        static::$factory = $factory;
     }
 }

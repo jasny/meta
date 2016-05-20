@@ -2,13 +2,17 @@
 
 namespace Jasny\Meta;
 
+use Jasny\Meta;
+use Jasny\Meta\TypeCasting;
+use Jasny\Meta\Introspection;
+
 /**
  * Implementation for TypeCasting trait
  * @ignore
  */
 class TypeCastingObject implements TypeCasting, Introspection
 {
-    use TypeCastingImplementation;
+    use TypeCasting\Implementation;
 
     private static $meta;
     public $prop;
@@ -23,7 +27,7 @@ class TypeCastingObject implements TypeCasting, Introspection
             return;
         }
         
-        self::$meta = new \Jasny\Meta();
+        self::$meta = new Meta();
         self::$meta->ofProperty('prop')['var'] = $type;
     }
     
