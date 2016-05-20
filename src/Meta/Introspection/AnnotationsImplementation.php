@@ -22,20 +22,10 @@ trait AnnotationsImplementation
      */
     public static function meta()
     {
-        $class = get_called_class();
-        $cacheKey = "Meta:{$class}:FromAnnotations";
-        
-        if (Meta::cache()->has($cacheKey)) {
-            return Meta::cache()->get($cacheKey);
-        }
-        
-        $refl = new ReflectionClass($class);
         
         $factory = new Factory\Annotations();
-        $meta = $factory->create($refl);
         
-        Meta::cache()->set("Meta:{$class}:FromAnnotations", $meta);
-        
-        return $meta;
+        $refl = new ReflectionClass(get_called_class());
+        return $factory->create($refl);
     }
 }

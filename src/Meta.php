@@ -17,19 +17,6 @@ use Jasny\Meta\Cache;
 class Meta extends ArrayObject
 {
     /**
-     * Meta factory
-     * @var Factory
-     */
-    protected static $factory;
-
-    /**
-     * Meta cache
-     * @var Cache
-     */
-    protected static $cache;
-
-    
-    /**
      * Meta data of class properties
      * @var Meta[]
      */
@@ -109,34 +96,5 @@ class Meta extends ArrayObject
         foreach ($this->properties as &$property) {
             $property = clone $property;
         }
-    }
-    
-    
-    /**
-     * Get the cache interface
-     * 
-     * @return Cache|\Desarrolla2\Cache\Cache
-     */
-    final public static function cache()
-    {
-        if (!isset(static::$cache)) {
-            static::useCache(new Cache\Simple());
-        }
-        
-        return static::$cache;
-    }
-    
-    /**
-     * Set cache interface
-     * 
-     * @param Cache|\Desarrolla2\Cache\Cache $cache
-     */
-    final public static function useCache($cache)
-    {
-        if (!$cache instanceof Cache && !$cache instanceof \Desarrolla2\Cache\Cache) {
-            throw new \InvalidArgumentException("Cache should be Jasny\Meta\Cache or Desarrolla2\Cache\Cache");
-        }
-        
-        static::$cache = $cache;
     }
 }

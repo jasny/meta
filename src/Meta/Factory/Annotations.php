@@ -4,6 +4,7 @@ namespace Jasny\Meta\Factory;
 
 use Jasny\Meta;
 use Jasny\Meta\Factory;
+use Jasny\Meta\Cache;
 
 use Reflector;
 use ReflectionClass;
@@ -16,6 +17,12 @@ use InvalidArgumentException;
  */
 class Annotations implements Factory
 {
+    /**
+     * Meta cache
+     * @var Cache
+     */
+    protected static $cache;
+    
     /**
      * Create Meta object from doc comment
      * 
@@ -36,6 +43,30 @@ class Annotations implements Factory
      */
     public function create(Reflector $refl)
     {
+        return $this->getFromCache($refl) ?: $this->createFromReflection($refl);
+    }
+    
+    /**
+     * Get metadata from cache
+     * 
+     * @param ReflectionClass|ReflectionProperty|ReflectionMethod $refl
+     * @return Meta
+     */
+    protected function getFromCache(Reflector $refl)
+    {
+        return $refl instanceof ReflectionClass
+            ? self::cache()->get("MetaFromAnnotations:" . $refl->getName())
+            : null;
+    }
+    
+    /**
+     * Get metadata from reflector
+     *
+     * @param ReflectionClass|ReflectionProperty|ReflectionMethod $refl
+     * @return Meta
+     */
+    protected function createFromReflection(Reflector $refl)
+    {
         if ($refl instanceof ReflectionClass) {
             $meta = $this->createForClass($refl);
         } elseif ($refl instanceof ReflectionProperty) {
@@ -46,8 +77,13 @@ class Annotations implements Factory
             throw new \InvalidArgumentException("Unsupported Reflector class: " . get_class($refl));
         }
         
+        if ($refl instanceof ReflectionClass) {
+            self::cache()->set("MetaFromAnnotations:" . $refl->getName(), $meta);
+        }
+        
         return $meta;
     }
+    
     
     /**
      * Get metadata for a class
@@ -190,5 +226,34 @@ class Annotations implements Factory
         }
         
         return $refl->isPrivate() ? 'private' : ($refl->isProtected() ? 'protected' : 'public');
+    }
+    
+    
+    /**
+     * Get the cache interface
+     * 
+     * @return Cache|\Desarrolla2\Cache\Cache
+     */
+    final public static function cache()
+    {
+        if (!isset(static::$cache)) {
+            static::useCache(new Cache\Simple());
+        }
+        
+        return static::$cache;
+    }
+    
+    /**
+     * Set cache interface
+     * 
+     * @param Cache|\Desarrolla2\Cache\Cache $cache
+     */
+    final public static function useCache($cache)
+    {
+        if (!$cache instanceof Cache && !$cache instanceof \Desarrolla2\Cache\Cache) {
+            throw new \InvalidArgumentException("Cache should be Jasny\Meta\Cache or Desarrolla2\Cache\Cache");
+        }
+        
+        static::$cache = $cache;
     }
 }

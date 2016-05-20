@@ -195,15 +195,15 @@ class MetaTest extends \PHPUnit_Framework_TestCase
     
     public function testDefaultCache()
     {
-        $this->assertInstanceOf(Cache\Simple::class, Meta::cache());
+        $this->assertInstanceOf(Cache\Simple::class, Factory\Annotations::cache());
     }
     
     public function testUseCache()
     {
         $cache = new Cache\Simple();
-        Meta::useCache($cache);
+        Factory\Annotations::useCache($cache);
         
-        $this->assertSame($cache, Meta::cache());
+        $this->assertSame($cache, Factory\Annotations::cache());
     }
     
     /**
@@ -211,6 +211,6 @@ class MetaTest extends \PHPUnit_Framework_TestCase
      */
     public function testUseCacheInvalidArgument()
     {
-        Meta::useCache(new \stdClass());
+        Factory\Annotations::useCache(new \stdClass());
     }
 }
