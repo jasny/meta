@@ -165,7 +165,7 @@ class Annotations implements Factory
         $ann = [];
         $matches = null;
 
-        $regex = '/^\s*(?:\/\*)?\*\s*@(\S+)(?:[ \t]+(\S.*?))?(?:\*\*\/)?$/m';
+        $regex = '/^\s*(?:\/\*)?\*\s*@(\S+)(?:\h+(\S.*?)|\h*)(?:\*\*\/)?\r?$/m';
         
         if (preg_match_all($regex, $doc, $matches, PREG_PATTERN_ORDER)) {
             $keys = $matches[1];
