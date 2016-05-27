@@ -191,7 +191,14 @@ class Annotations implements Factory
         if (!$refl instanceof ReflectionProperty && !$refl instanceof ReflectionMethod) {
             throw new InvalidArgumentException("Unsupported Reflector class: " . get_class($refl));
         }
-    
+        
+        if (strstr($var, '|')) {
+            $vars = explode('|', $var);
+            return join('|', array_map(function ($subvar) use ($refl) {
+                return $this->normalizeVar($refl, $subvar);
+            }, $vars));
+        }
+        
         // Remove additional var info
         if (strpos($var, ' ') !== false) $var = substr($var, 0, strpos($var, ' '));
 
