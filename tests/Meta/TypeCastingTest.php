@@ -86,7 +86,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an array to a string
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast an array to a string
      */
     public function testCastValueToStringWithArray()
@@ -102,7 +102,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an object to a string
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a stdClass object to a string
      */
     public function testCastValueToStringWithObject()
@@ -118,7 +118,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a string
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to a string
      */
     public function testCastValueToStringWithResource()
@@ -171,7 +171,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an array to a boolean
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast an array to a boolean
      */
     public function testCastValueToBooleanWithArray()
@@ -187,7 +187,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an object to a boolean
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a stdClass object to a boolean
      */
     public function testCastValueToBooleanWithObject()
@@ -203,7 +203,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a boolean
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to a boolean
      */
     public function testCastValueToBooleanWithResource()
@@ -290,7 +290,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an array to a integer
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast an array to a integer
      */
     public function testCastValueToIntegerWithArray()
@@ -306,7 +306,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an object to a integer
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a stdClass object to a integer
      */
     public function testCastValueToIntegerWithObject()
@@ -322,7 +322,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a integer
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to a integer
      */
     public function testCastValueToIntegerWithResource()
@@ -413,7 +413,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an array to a float
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast an array to a float
      */
     public function testCastValueToFloatWithArray()
@@ -429,7 +429,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an object to a float
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a stdClass object to a float
      */
     public function testCastValueToFloatWithObject()
@@ -445,7 +445,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a float
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to a float
      */
     public function testCastValueToFloatWithResource()
@@ -510,7 +510,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a array
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to an array
      */
     public function testCastValueToArrayWithResource()
@@ -560,7 +560,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the notice when type casting a scalar value to an object
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast string "foo" to an object
      */
     public function testCastValueToObjectWithScalar()
@@ -576,7 +576,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test type casting an resource to a object
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a gd resource to an object
      */
     public function testCastValueToObjectWithResource()
@@ -633,7 +633,7 @@ class TypeCastingTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the exception when type casting for custom class
      * 
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage Unable to cast a integer to a MetaTest\NotExistent object: Class not found
      */
     public function testClassException()
