@@ -39,7 +39,8 @@ trait Implementation
             if (!isset($this->$name)) continue;
             
             if (isset($meta['var'])) {
-                $this->$name = $this->typeCast($this->$name)->to($meta['var']);
+                $typecast = $this->typeCast($this->$name)->setName(get_class($this) . '::' . $name);
+                $this->$name = $typecast->to($meta['var']);
             }
         }
         
