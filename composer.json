@@ -18,7 +18,7 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "jasny/typecast": "^2.0.1"
+        "jasny/typecast": "~2.1.0"
     },
     "require-dev": {
         "jasny/php-code-quality": "^1.1.0"
