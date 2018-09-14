@@ -2,19 +2,58 @@
 
 namespace Jasny\Meta;
 
-use Reflector;
-use Jasny\Meta;
+use Jasny\Meta\Source\SourceInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
- * Meta factory
+ * Factory for getting meta
  */
-interface Factory
+class Factory implements FactoryInterface
 {
     /**
-     * Get metadata
+     * Source for getting meta
+     * @var SourceInterface
+     **/
+    protected $source;
+
+    /**
+     * Cache object for caching meta
+     * @var CacheInterface
+     **/
+    protected $cache;
+
+    /**
+     * Create factory instance
      *
-     * @param \ReflectionClass|\ReflectionProperty|\ReflectionMethod $refl
-     * @return Meta
+     * @param SourceInterface $source
+     * @param CacheInterface $cache
      */
-    public function create(Reflector $refl);
+    public function __construct(SourceInterface $source, CacheInterface $cache)
+    {
+        $this->source = $source;
+        $this->cache = $cache;
+    }
+
+    /**
+     * Get meta for given class
+     * @param  string $class
+     * @return MetaClass
+     */
+    public function forClass(string $class): MetaClass
+    {
+        $data = $this->source->forClass($class);
+
+        return $this->asMeta($data);
+    }
+
+    /**
+     * Convert data to meta object
+     *
+     * @param array $data
+     * @return MetaClass
+     */
+    protected function asMeta(array $data): MetaClass
+    {
+        return new MetaClass($data);
+    }
 }
