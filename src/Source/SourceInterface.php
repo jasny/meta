@@ -1,6 +1,8 @@
 <?php
 
-namespace Meta\Source;
+declare(strict_types=1);
+
+namespace Jasny\Meta\Source;
 
 /**
  * Interface for meta sources
