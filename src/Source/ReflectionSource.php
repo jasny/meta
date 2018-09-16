@@ -47,7 +47,7 @@ class ReflectionSource implements SourceInterface
         $reflection = $this->factory->reflectClass($class);
 
         $meta = $this->getClassMeta($reflection);
-        $meta['properties'] = $this->getPropertiesMeta($reflection);
+        $meta['@properties'] = $this->getPropertiesMeta($reflection);
 
         return $meta;
     }

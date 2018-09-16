@@ -37,7 +37,7 @@ class ReflectionSourceTest extends TestCase
                 [
                     'name' => $class1,
                     'title' => uncase($shortName1),
-                    'properties' => [
+                    '@properties' => [
                         'foo' => [
                             'name' => 'foo',
                             'title' => 'foo',
@@ -66,7 +66,7 @@ class ReflectionSourceTest extends TestCase
                 [
                     'name' => $class2,
                     'title' => uncase($shortName2),
-                    'properties' => []
+                    '@properties' => []
                 ]
             ],
         ];
