@@ -16,11 +16,18 @@
         "issues": "https://github.com/jasny/meta/issues",
         "source": "https://github.com/jasny/meta"
     },
+     "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/jasny/phpdoc-parser"
+        }
+    ],
     "require": {
         "php": ">=5.6.0",
         "jasny/typecast": "~2.1.0",
         "jasny/reflection-factory": "^1.0.0",
         "jasny/php-functions": "^3.3",
+        "jasny/phpdoc-parser": "dev-master",
         "psr/simple-cache": "^1.0"
     },
     "require-dev": {
