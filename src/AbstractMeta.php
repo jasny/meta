@@ -12,6 +12,16 @@ abstract class AbstractMeta implements MetaInterface
     protected $meta = [];
 
     /**
+     * Create class instance
+     *
+     * @param array $meta
+     */
+    public function __construct(array $meta)
+    {
+        $this->meta = $meta;
+    }
+
+    /**
      * Get meta for specific key
      *
      * @param string $key

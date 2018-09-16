@@ -10,10 +10,39 @@ namespace Jasny\Meta;
 class MetaClass extends AbstractMeta
 {
     /**
-     * Array with meta-data for class properties
-     * @var string
+     * Class properties
+     * @var array
      **/
-    protected $properties = [];
+    protected $properties;
+
+    /**
+     * Create class instance
+     *
+     * @param array $meta
+     */
+    public function __construct(array $meta)
+    {
+        $this->properties = $this->castPropertiesMeta($meta);
+        unset($meta['@properties']);
+
+        parent::__construct($meta);
+    }
+
+    /**
+     * Cast properties meta to MetaProperty class
+     *
+     * @param array $meta
+     * @return array
+     */
+    protected function castPropertiesMeta(array $meta): array
+    {
+        $properties = [];
+        foreach ($meta['@properties'] ?? [] as $name => $data) {
+            $properties[$name] = new MetaProperty($data);
+        }
+
+        return $properties;
+    }
 
     /**
      * Get meta data for class property
@@ -31,9 +60,9 @@ class MetaClass extends AbstractMeta
      *
      * @return array
      */
-    public function getProperties(): ?array
+    public function getProperties(): array
     {
-        return $this->properties;
+        return $this->properties ?? [];
     }
 
     /**
