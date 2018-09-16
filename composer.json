@@ -17,15 +17,19 @@
         "source": "https://github.com/jasny/meta"
     },
     "require": {
-        "php": ">=5.6.0",
-        "jasny/typecast": "~2.1.0"
+        "php": ">=7.1.0",
+        "jasny/typecast": "~2.1.0",
+        "jasny/reflection-factory": "^1.0.0",
+        "jasny/php-functions": "^3.3",
+        "psr/simple-cache": "^1.0.1"
     },
     "require-dev": {
-        "jasny/php-code-quality": "^1.1.0"
+        "jasny/php-code-quality": "^2.3"
     },
     "autoload": {
         "psr-4": {
-            "Jasny\\": "src/"
+            "Jasny\\Meta\\": "src/",
+            "Jasny\\Meta\\Tests\\": "tests/"
         }
     }
 }
