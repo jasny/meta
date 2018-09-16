@@ -49,7 +49,7 @@ class ReflectionSourceTest extends TestCase
         $expected = [
             'name' => $class,
             'title' => $title,
-            'properties' => [
+            '@properties' => [
                 'fooBar' => [
                     'name' => 'fooBar',
                     'title' => 'foo bar',
