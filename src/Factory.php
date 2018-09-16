@@ -36,14 +36,20 @@ class Factory implements FactoryInterface
 
     /**
      * Get meta for given class
+     *
      * @param  string $class
      * @return MetaClass
      */
     public function forClass(string $class): MetaClass
     {
-        $data = $this->source->forClass($class);
+        $meta = $this->cache->get('MetaForClass:' . $class);
 
-        return $this->asMeta($data);
+        if (!$meta) {
+            $data = $this->source->forClass($class);
+            $meta = $this->asMeta($data);
+        }
+
+        return $meta;
     }
 
     /**

@@ -6,9 +6,12 @@ namespace Jasny\Meta\Tests;
 
 use Jasny\Meta\Source\ReflectionSource;
 use Jasny\ReflectionFactory\ReflectionFactory;
+use Jasny\Meta\Tests\Support\ClassWithPublicProperties;
+use Jasny\Meta\Tests\Support\ClassWithoutPublicProperties;
 use PHPUnit\Framework\TestCase;
 use function Jasny\uncase;
 use ReflectionClass;
+use ReflectionProperty;
 
 /**
  * @covers Jasny\Meta\Source\ReflectionSource
@@ -16,76 +19,49 @@ use ReflectionClass;
 class ReflectionSourceTest extends TestCase
 {
     /**
-     * Provide data for testing 'forClass' method
-     *
-     * @return array
-     */
-    public function forClassProvider()
-    {
-        $object1 = static::getObject();
-        $object2 = static::getObjectNoPublicProperties();
-
-        $class1 = get_class($object1);
-        $class2 = get_class($object2);
-
-        $shortName1 = substr($class1, strrpos($class1, '\\') + 1);
-        $shortName2 = substr($class2, strrpos($class2, '\\') + 1);
-
-        return [
-            [
-                $class1,
-                [
-                    'name' => $class1,
-                    'title' => uncase($shortName1),
-                    '@properties' => [
-                        'foo' => [
-                            'name' => 'foo',
-                            'title' => 'foo',
-                            'default' => 'some_foo'
-                        ],
-                        'barGar' => [
-                            'name' => 'barGar',
-                            'title' => 'bar gar',
-                            'default' => null
-                        ],
-                        'zoo_vox' => [
-                            'name' => 'zoo_vox',
-                            'title' => 'zoo vox',
-                            'default' => 'any_zoo'
-                        ],
-                        'boo' => [
-                            'name' => 'boo',
-                            'title' => 'boo',
-                            'default' => null
-                        ],
-                    ]
-                ]
-            ],
-            [
-                $class2,
-                [
-                    'name' => $class2,
-                    'title' => uncase($shortName2),
-                    '@properties' => []
-                ]
-            ],
-        ];
-    }
-
-    /**
      * Test 'forClass' method
-     *
-     * @dataProvider forClassProvider
      */
-    public function testForClass($class, $expected)
+    public function testForClass()
     {
-        $reflection = new ReflectionClass($class);
+        $class = ReflectionSourceTest::class;
+        $shortName = 'ReflectionSourceTest';
+        $title = 'reflection source test';
+
+        $reflection = $this->createMock(ReflectionClass::class);
+        $property1 = $this->createMock(ReflectionProperty::class);
+        $property2 = $this->createMock(ReflectionProperty::class);
+        $properties = [$property1, $property2];
+
+        $property1->expects($this->once())->method('getName')->willReturn('fooBar');
+        $property2->expects($this->once())->method('getName')->willReturn('bar_zoo');
+
+        $reflection->expects($this->once())->method('getName')->willReturn($class);
+        $reflection->expects($this->once())->method('getShortName')->willReturn($shortName);
+        $reflection->expects($this->once())->method('getProperties')->with(ReflectionProperty::IS_PUBLIC)->willReturn($properties);
+        $reflection->expects($this->once())->method('getDefaultProperties')->willReturn(['fooBar' => 'test_default', 'bar_zoo' => null]);
 
         $reflectionFactory = $this->createMock(ReflectionFactory::class);
         $reflectionFactory->expects($this->once())->method('reflectClass')->with($class)->willReturn($reflection);
 
         $source = new ReflectionSource($reflectionFactory);
         $result = $source->forClass($class);
+
+        $expected = [
+            'name' => $class,
+            'title' => $title,
+            'properties' => [
+                'fooBar' => [
+                    'name' => 'fooBar',
+                    'title' => 'foo bar',
+                    'default' => 'test_default'
+                ],
+                'bar_zoo' => [
+                    'name' => 'bar_zoo',
+                    'title' => 'bar zoo',
+                    'default' => null
+                ],
+            ]
+        ];
 
         $this->assertSame($expected, $result);
     }
@@ -102,35 +78,5 @@ class ReflectionSourceTest extends TestCase
 
         $source = new ReflectionSource($reflectionFactory);
         $result = $source->forClass('Foo');
-    }
-
-    /**
-     * Get object to get meta for
-     *
-     * @return object
-     */
-    protected static function getObject()
-    {
-        return new class() {
-            public static $foo = 'some_foo';
-            public static $barGar;
-            public $zoo_vox = 'any_zoo';
-            public $boo;
-            protected $wha;
-            private $bla;
-        };
-    }
-
-    /**
-     * Get object to get meta for
-     *
-     * @return object
-     */
-    protected static function getObjectNoPublicProperties()
-    {
-        return new class() {
-            protected $wha = 'some_default';
-            private $bla;
-        };
     }
 }

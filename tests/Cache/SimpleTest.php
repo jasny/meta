@@ -2,7 +2,7 @@
 
 namespace Jasny\Meta\Tests\Cache;
 
-use Jasny\Meta;
+use Jasny\Meta\MetaClass;
 use Jasny\Meta\Cache;
 use PHPUnit\Framework\TestCase;
 
@@ -15,14 +15,12 @@ class SimpleTest extends TestCase
 
     protected function setUp()
     {
-        $this->cache = new Cache\Simple;
+        $this->cache = new Cache\Simple();
     }
 
     public function testCached()
     {
-        $meta = new Meta();
-        $meta->set('a', 1);
-        $meta->ofProperty('b')->set('c', 2);
+        $meta = $this->createMock(MetaClass::class);
 
         $this->cache->set('abc', $meta);
 

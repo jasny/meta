@@ -2,7 +2,7 @@
 
 namespace Jasny\Meta\Tests\Cache;
 
-use Jasny\Meta;
+use Jasny\Meta\MetaClass;
 use Jasny\Meta\Cache;
 use PHPUnit\Framework\TestCase;
 
@@ -15,12 +15,13 @@ class NoneTest extends TestCase
 
     protected function setUp()
     {
-        $this->cache = new Cache\None;
+        $this->cache = new Cache\None();
     }
 
     public function testCached()
     {
-        $meta = new Meta();
+        $meta = $this->createMock(MetaClass::class);
+
         $this->cache->set('abc', $meta);
 
         $this->assertFalse($this->cache->has('abc'));
