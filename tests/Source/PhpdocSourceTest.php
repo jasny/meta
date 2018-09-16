@@ -81,10 +81,10 @@ DOC;
         $result = $source->forClass($class);
 
         $expected = [
-           'summary' => 'Some class comment',
+            'summary' => 'Some class comment',
             'description' => 'Some class comment',
             'package' => 'Wonders',
-            'properties' => [
+            '@properties' => [
                 'foo_var' => [
                     'var' => 'array',
                     'required' => true
