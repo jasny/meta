@@ -33,7 +33,7 @@ $meta = $factory->forClass(FooBar::class);
 
 In here:
 
-* `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - to obtain meta-data from class and return it as associative array
+* `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - to obtain metadata from class and return it as associative array
 * `$cache` is an implementation of `Psr\SimpleCache\CacheInterface` - to handle caching meta (interface is defined in [PHP FIG Simple Cache](https://github.com/php-fig/simple-cache))
 * `$meta` returned is an instance of `Jasny\Meta\MetaClass`.
 
@@ -42,9 +42,9 @@ Lets look closely at all of those.
 Meta Sources
 ---
 
-Source is an object that actually obtains meta data from class definition. We have three classes of sources defined:
+Source is an object that actually obtains metadata from class definition. We have three classes of sources defined:
 
-* `Jasny\Meta\Source\PhpdocSource` - for obtaining meta data, defined in doc-comments
+* `Jasny\Meta\Source\PhpdocSource` - for obtaining metadata, defined in doc-comments
 * `Jasny\Meta\Source\ReflectionSource` - for obtaining some generic information, using reflection methods
 * `Jasny\Meta\Source\CombinedSource` - a class that uses other sources to get meta and to merge it in a single output array
 
@@ -92,7 +92,7 @@ class FooBar
 }
 ```
 
-We obtain meta-data:
+We obtain metadata:
 
 ```php
 use Jasny\Meta\Source\PhpdocSource;
@@ -141,7 +141,7 @@ In here we used two additional dependencies:
 
 This class does not take any information from doc-comments, but fetches data using only reflection methods.
 
-Having a class from previous example as input, we obtain meta-data:
+Having a class from previous example as input, we obtain metadata:
 
 ```php
 use Jasny\Meta\Source\ReflectionSource;
@@ -221,7 +221,7 @@ As you see, meta, obtained by means of `$phpdocSource` and `$reflectionSource`, 
 Caching
 ---
 
-The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache meta-data between calls for the same class name.
+The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache metadata between calls for the same class name.
 
 We have two implementations of cache:
 
@@ -238,7 +238,7 @@ Meta returned by factory is an instance of `Jasny\Meta\MetaClass`. It has the fo
 * `get(string $key, $default = null)` - get class meta by key
 * `is(string $key): bool` - check if meta key exists and is not empty
 * `has(string $key): bool` - check if meta key exists (can be empty)
-* `getProperty(string $name): ?MetaProperty` - obtain meta data for given class property. Result is either null, if property does not exists, or an instance of `Jasny\Meta\MetaProperty`
-* `getProperties(): array` - get meta data for all class properties as array of `Jasny\Meta\MetaProperty` objects
+* `getProperty(string $name): ?MetaProperty` - obtain metadata for given class property. Result is either null, if property does not exists, or an instance of `Jasny\Meta\MetaProperty`
+* `getProperties(): array` - get metadata for all class properties as array of `Jasny\Meta\MetaProperty` objects
 
 `MetaProperty` class implements the first three methods of those (so `get`, `is` and `has`).
