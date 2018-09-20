@@ -13,6 +13,7 @@ interface MetaInterface
      * Get meta for specific key
      *
      * @param string $key
+     * @param mixed $default
      * @return mixed
      */
     public function get(string $key, $default = null);

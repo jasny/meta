@@ -19,12 +19,16 @@ class FactoryTest extends TestCase
     public function testForClass()
     {
         $class = 'Foo';
+        $cacheName = 'MetaForClass:' . $class;
 
         $source = $this->createMock(SourceInterface::class);
         $cache = $this->createMock(CacheInterface::class);
 
-        $cache->expects($this->once())->method('get')->with('MetaForClass:' . $class)->willReturn(null);
+        $cache->expects($this->once())->method('get')->with($cacheName)->willReturn(null);
         $source->expects($this->once())->method('forClass')->with($class)->willReturn(['foo' => 'bar']);
+        $cache->expects($this->once())->method('set')->with($cacheName, $this->callback(function ($meta) {
+            return $meta instanceof MetaClass && $meta->get('foo') === 'bar';
+        }));
 
         $factory = new Factory($source, $cache);
         $result = $factory->forClass($class);

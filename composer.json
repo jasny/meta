@@ -44,7 +44,7 @@
             "phpcloc cloc src",
             "phpunit",
             "phpcs -p src",
-            "phpstan analyse src tests"
+            "phpstan analyse src"
         ]
     }
 }

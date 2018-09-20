@@ -9,6 +9,10 @@ namespace Jasny\Meta;
  */
 abstract class AbstractMeta implements MetaInterface
 {
+    /**
+     * Meta data
+     * @var array
+     */
     protected $meta = [];
 
     /**
@@ -25,6 +29,7 @@ abstract class AbstractMeta implements MetaInterface
      * Get meta for specific key
      *
      * @param string $key
+     * @param mixed $default
      * @return mixed
      */
     public function get(string $key, $default = null)
@@ -40,7 +45,7 @@ abstract class AbstractMeta implements MetaInterface
      */
     public function is(string $key): bool
     {
-        return !empty($this->meta[$key]);
+        return isset($this->meta[$key]) && (bool)$this->meta[$key];
     }
 
     /**

@@ -15,6 +15,7 @@ class None implements Cache
      *
      * @param string      $key
      * @param MetaClass   $meta
+     * @return void
      */
     public function set($key, MetaClass $meta)
     {

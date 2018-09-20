@@ -89,7 +89,7 @@ class PhpdocSource implements SourceInterface
             $doc = $item->getDocComment();
             $notations = $this->parser->parse($doc);
 
-            if ($notations) {
+            if (count($notations) > 0) {
                 $meta[$item->getName()] = $notations;
             }
         }
