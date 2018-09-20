@@ -22,105 +22,221 @@ Annotations
 Metadata can be specified through annotations. In PHP annotations are written in the docblock and start
 with `@`. If you're familiar with writing docblocks, you probably recognize them.
 
-The `Jasny\Meta\Introspection\AnnotationsImplementation` [trait](http://php.net/manual/en/language.oop5.traits.php) adds a static method `meta()` to your class, which returns the parsed annotations as metadata.
-
-Implement the `Jasny\Meta\Introspection` [interface](http://php.net/manual/en/language.oop5.interfaces.php) to indicate
-that the class has accessable metadata through the `meta()` method.
+Here's an example of obtaining metadata for given class:
 
 ```php
-use Jasny\Meta\Introspection;
+    use Jasny\Meta\Factory;
 
+    $factory = new Factory($source, $cache);
+    $meta = $factory->forClass(FooBar::class);
+```
+
+In here
+
+* `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - an object, that obtains meta-data from class and returns it as associative array
+* `$cache` is an implementation of `Psr\SimpleCache\CacheInterface` - an object, that handles caching meta (interface is defined in [PHP FIG Simple Cache](https://github.com/php-fig/simple-cache))
+* `$meta` returned is an instance of `Jasny\Meta\MetaClass`.
+
+Lets look closely at all of those.
+
+Meta Sources
+---
+
+Source is an object that actually obtains meta data from class definition. We have three classes of sources defined:
+
+* `Jasny\Meta\Source\PhpdocSource` - for obtaining meta data, defined in doc-comments
+* `Jasny\Meta\Source\ReflectionSource` - for obtaining some generic information, using reflection methods
+* `Jasny\Meta\Source\CombinedSource` - actually, a class that uses other sources to get meta and to merge it in a single output array
+
+#PhpdocSource
+
+Given a class:
+
+```php
 /**
- * A system user
+ * Original FooBar class
  *
- * @represents A person or organization
- * @softdelete
+ * @package FoosAndBars
+ * @author Jimi Hendrix <jimi-guitars@example.com>
  */
-class User implements Jasny\Meta\Introspection
+class FooBar
 {
-    use Introspection\AnnotationsImplementation;
-
     /**
-     * The user's e-mail address.
-     *
-     * @var string
-     * @type url
+     * Very first property
+     * @var array
      * @required
      */
-    public $website;
-    
-    ..
-}
+    public $first;
 
-echo User::meta()['represents'];                  // A person or organization
-echo User::meta()['softdelete'] ? 'yes' : 'no';   // yes
-echo User::meta()['lazy'] ? 'yes' : 'no';         // no
-
-echo User::meta()->ofProperty('website')['var'];  // string
-```
-
-
-Meta class
----
-
-The `Jasny\Meta` class extends [ArrayObject](http://php.net/manual/en/class.arrayobject.php). The metadata is
-accessable as associated array or through the `get()` method.
-
-```php
-User::meta()['foo'];
-User::meta()->get('foo');
-```
-
-Requesting non-existing keys will return `null` and won't trigger a notice.
-
-You may also set or add metadata. Either using the Meta object as associated array or through the `set()` method.
-
-```
-User::meta()['foo'] = true;
-User::meta()->set($key, $value);
-User::meta()->set(array $values);
-```
-
-
-#### Class properties
-
-metadata of class properties are available as properties of the of the Meta object or through the `ofProperty()`
-method. To get the meta of all properties use the `ofProperties()` method.
-
-```php
-User::meta()->ofProperty('email')['required'];
-User::meta()->ofProperty('email')->get('required');
-User::meta()->ofProperties(); // Get metadata of all class properties
-```
-
-
-Custom metadata
----
-
-You may wish to add metadata from another source. Instead of using the `Jasny\Meta\Annotations` trait, create your own
-implementation of the `meta()` method.
-
-```php
-/**
- * A system user
- *
- * @softdelete
- */
-class User implements Jasny\Meta\Introspection
-{
     /**
-     * Get class metadata
-     *
-     * @return Jasny\Meta
+     * And some more property
+     * @var string|Foo
+     * @version 3.4
+     * @default 'a_place_for_foo'
      */
-    public static funciton meta()
-    {
-        return new Jasny\Meta(['abc' => 10, 'def' => 20]);
-    }
+    public $secondFoo;
+
+    /**
+     * Protected properties are not included in fetched meta
+     * @var int
+     */
+    protected $third;
+
+    /**
+     * Privates also are not included
+     * @var array
+     */
+    private $fourth;
+
+    //Methods and constants are not included in meta for now
 }
 ```
 
-Todo
+We obtain meta-data:
+
+```php
+use Jasny\Meta\Source\PhpdocSource;
+use Jasny\ReflectionFactory\ReflectionFactory;
+use Jasny\PhpdocParser\PhpdocParser;
+use Jasny\PhpdocParser\Set\PhpDocumentor;
+
+$reflectionFactory = new ReflectionFactory();
+
+$tags = PhpDocumentor::tags();
+$phpdocParser = new PhpdocParser($tags);
+
+$source = new PhpdocSource($reflectionFactory, $phpdocParser);
+$meta = $source->forClass(FooBar::class);
+
+var_export($meta);
+```
+
+```php
+[
+    'package' => 'FoosAndBars',
+    'author' => [
+        'name' => 'Jimi Hendrix',
+        'email' => 'jimi-guitars@example.com'
+    ],
+    '@properties' => [
+        'first' => [
+            'var' => 'array',
+            'required' => true
+        ],
+        'secondFoo' => [
+            'var' => 'string|Foo',
+            'version' => '3.4',
+            'default' => 'a_place_for_foo'
+        ]
+    ]
+]
+```
+
+In here we used two additional dependencies:
+
+* `Jasny\ReflectionFactory\ReflectionFactory` - class for creating reflections, is defined in [Jasny Reflection factory](https://github.com/jasny/reflection-factory)
+* `Jasny\PhpdocParser\PhpdocParser` - class for parsing doc-comments, is defined in [Jasny PHPDoc parser](https://github.com/jasny/phpdoc-parser)
+
+#ReflectionSource
+
+This class does not take any information from doc-comments, but just fetches data, that can be retrieved using only reflection methods.
+
+Having a class from previous example as input, we obtain meta-data:
+
+```php
+use Jasny\Meta\Source\ReflectionSource;
+use Jasny\ReflectionFactory\ReflectionFactory;
+
+$reflectionFactory = new ReflectionFactory();
+
+$source = new ReflectionSource($reflectionFactory);
+$meta = $source->forClass(FooBar::class);
+
+var_export($meta);
+```
+
+```php
+[
+    'name' => 'Some\\Namespace\\FoosAndBars',
+    'title' => 'foos and bars',
+    '@properties' => [
+        'first' => [
+            'name' => 'first',
+            'title' => 'first',
+            'default' => null
+        ],
+        'secondFoo' => [
+            'name' => 'secondFoo',
+            'title' => 'second foo',
+            'default' => 'a_place_for_foo'
+        ]
+    ]
+]
+```
+
+`$reflectionFactory` dependency is the same as defined at the upper example for `PhpdocSource`.
+
+#CombinedSource
+
+Here's an example for the same class definition:
+
+```php
+$sources = [$phpdocSource, $reflectionSource];
+$source = new CombinedSource($sources);
+$meta = $source->forClass(FooBar::class);
+
+var_export($meta);
+```
+
+```php
+[
+    'package' => 'FoosAndBars',
+    'author' => [
+        'name' => 'Jimi Hendrix',
+        'email' => 'jimi-guitars@example.com'
+    ],
+    'name' => 'Some\\Namespace\\FoosAndBars',
+    'title' => 'foos and bars',
+    '@properties' => [
+        'first' => [
+            'var' => 'array',
+            'required' => true,
+            'name' => 'first',
+            'title' => 'first',
+            'default' => null
+        ],
+        'secondFoo' => [
+            'var' => 'string|Foo',
+            'version' => '3.4',
+            'name' => 'secondFoo',
+            'title' => 'second foo',
+            'default' => 'a_place_for_foo'
+        ]
+    ]
+]
+```
+
+As you see, meta, obtained by means of `$phpdocSource` and `$reflectionSource`, was merged into a single array.
+
+Caching
 ---
 
-* Support multiple annotations with the same key (eg @param)
+The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache meta-data, so that it was not computed the second time for given class, but fethched from cache.
+
+We have two implementations of cache:
+
+* `Jasny\Meta\Cache\None` - actually does not perform any caching, used to simplify a code for cache usage
+* `Jasny\Meta\Cache\Simple` - caching into a process memory (so in array). This cache does not persist among different php processes and lasts till the current process ends.
+
+Meta
+---
+
+Meta returned by factory is an instance of `Jasny\Meta\MetaClass`. It has the following methods to obtain data:
+
+* `get(string $key, $default = null)` - get class meta by key
+* `is(string $key): bool` - check if meta key exists and is not empty
+* `has(string $key): bool` - check if meta key exists (can be empty)
+* `getProperty(string $name): ?MetaProperty` - obtain meta data for given class property. Result is either null, if property does not exists, or an instance of `Jasny\Meta\MetaProperty`
+* `getProperties(): array` - get meta data for all class properties as array of `Jasny\Meta\MetaProperty` objects
+
+`MetaProperty` class implements the first three methods of those (so `get`, `is` and `has`).
