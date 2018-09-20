@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jasny\Meta\Tests;
+namespace Jasny\Meta\Tests\Source;
 
 use Jasny\Meta\Source\SourceInterface;
 use Jasny\Meta\Source\CombinedSource;

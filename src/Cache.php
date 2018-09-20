@@ -21,7 +21,7 @@ interface Cache
      * Get meta from cache
      *
      * @param string $key
-     * @return Meta|null
+     * @return MetaClass|null
      */
     public function get($key);
 

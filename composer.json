@@ -38,5 +38,13 @@
             "Jasny\\Meta\\": "src/",
             "Jasny\\Meta\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": [
+            "phpcloc cloc src",
+            "phpunit",
+            "phpcs -p src",
+            "phpstan analyse src tests"
+        ]
     }
 }
