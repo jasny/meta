@@ -2,32 +2,33 @@
 
 namespace Jasny\Meta;
 
-use Jasny\Meta;
+use Jasny\Meta\MetaClass;
 
 /**
- * Caching Meta
+ * Caching MetaClass
  */
 interface Cache
 {
     /**
      * Store meta in cache
-     * 
-     * @param string $key
-     * @param Meta   $meta
+     *
+     * @param string      $key
+     * @param MetaClass   $meta
+     * @return void
      */
-    public function set($key, Meta $meta);
-    
+    public function set($key, MetaClass $meta);
+
     /**
      * Get meta from cache
-     * 
+     *
      * @param string $key
-     * @return Meta|null
+     * @return MetaClass|null
      */
     public function get($key);
-    
+
     /**
      * Check if meta exists in cache
-     * 
+     *
      * @param string $key
      * @return boolean
      */
