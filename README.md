@@ -25,16 +25,16 @@ with `@`. If you're familiar with writing docblocks, you probably recognize them
 Here's an example of obtaining metadata for given class:
 
 ```php
-    use Jasny\Meta\Factory;
+use Jasny\Meta\Factory;
 
-    $factory = new Factory($source, $cache);
-    $meta = $factory->forClass(FooBar::class);
+$factory = new Factory($source, $cache);
+$meta = $factory->forClass(FooBar::class);
 ```
 
-In here
+In here:
 
-* `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - an object, that obtains meta-data from class and returns it as associative array
-* `$cache` is an implementation of `Psr\SimpleCache\CacheInterface` - an object, that handles caching meta (interface is defined in [PHP FIG Simple Cache](https://github.com/php-fig/simple-cache))
+* `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - to obtain meta-data from class and return it as associative array
+* `$cache` is an implementation of `Psr\SimpleCache\CacheInterface` - to handle caching meta (interface is defined in [PHP FIG Simple Cache](https://github.com/php-fig/simple-cache))
 * `$meta` returned is an instance of `Jasny\Meta\MetaClass`.
 
 Lets look closely at all of those.
@@ -46,9 +46,9 @@ Source is an object that actually obtains meta data from class definition. We ha
 
 * `Jasny\Meta\Source\PhpdocSource` - for obtaining meta data, defined in doc-comments
 * `Jasny\Meta\Source\ReflectionSource` - for obtaining some generic information, using reflection methods
-* `Jasny\Meta\Source\CombinedSource` - actually, a class that uses other sources to get meta and to merge it in a single output array
+* `Jasny\Meta\Source\CombinedSource` - a class that uses other sources to get meta and to merge it in a single output array
 
-#PhpdocSource
+### PhpdocSource
 
 Given a class:
 
@@ -137,9 +137,9 @@ In here we used two additional dependencies:
 * `Jasny\ReflectionFactory\ReflectionFactory` - class for creating reflections, is defined in [Jasny Reflection factory](https://github.com/jasny/reflection-factory)
 * `Jasny\PhpdocParser\PhpdocParser` - class for parsing doc-comments, is defined in [Jasny PHPDoc parser](https://github.com/jasny/phpdoc-parser)
 
-#ReflectionSource
+### ReflectionSource
 
-This class does not take any information from doc-comments, but just fetches data, that can be retrieved using only reflection methods.
+This class does not take any information from doc-comments, but fetches data using only reflection methods.
 
 Having a class from previous example as input, we obtain meta-data:
 
@@ -174,9 +174,9 @@ var_export($meta);
 ]
 ```
 
-`$reflectionFactory` dependency is the same as defined at the upper example for `PhpdocSource`.
+`$reflectionFactory` dependency is the same as defined in the upper example for `PhpdocSource`.
 
-#CombinedSource
+### CombinedSource
 
 Here's an example for the same class definition:
 
@@ -221,12 +221,14 @@ As you see, meta, obtained by means of `$phpdocSource` and `$reflectionSource`, 
 Caching
 ---
 
-The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache meta-data, so that it was not computed the second time for given class, but fethched from cache.
+The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache meta-data between calls for the same class name.
 
 We have two implementations of cache:
 
 * `Jasny\Meta\Cache\None` - actually does not perform any caching, used to simplify a code for cache usage
 * `Jasny\Meta\Cache\Simple` - caching into a process memory (so in array). This cache does not persist among different php processes and lasts till the current process ends.
+
+So if you don't want to cache meta, just use a `$cache = new Jasny\Meta\Cache\None()`.
 
 Meta
 ---
