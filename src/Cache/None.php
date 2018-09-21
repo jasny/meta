@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jasny\Meta\Cache;
 
-use Jasny\Meta\CacheInterface;
 use Jasny\Meta\MetaClass;
 
 /**

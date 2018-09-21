@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jasny\Meta;
+namespace Jasny\Meta\Cache;
 
 use Jasny\Meta\MetaClass;
 

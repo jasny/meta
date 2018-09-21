@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jasny\Meta\Cache;
 
 use Jasny\Meta\MetaClass;
-use Jasny\Meta\CacheInterface;
 
 /**
  * Very simple caching in the process memory
