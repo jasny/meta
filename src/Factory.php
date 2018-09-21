@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jasny\Meta;
 
 use Jasny\Meta\Source\SourceInterface;
-use Psr\SimpleCache\CacheInterface;
+use Jasny\Meta\Cache\CacheInterface;
 
 /**
  * Factory for getting meta

@@ -5,7 +5,7 @@ namespace Jasny\Meta\Tests;
 use Jasny\Meta\Factory;
 use Jasny\Meta\MetaClass;
 use Jasny\Meta\Source\SourceInterface;
-use Psr\SimpleCache\CacheInterface;
+use Jasny\Meta\Cache\CacheInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

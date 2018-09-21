@@ -24,7 +24,6 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "jasny/typecast": "~2.1.0",
         "jasny/reflection-factory": "^1.0.0",
         "jasny/php-functions": "^3.3",
         "jasny/phpdoc-parser": "dev-master",
