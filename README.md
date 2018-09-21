@@ -34,7 +34,7 @@ $meta = $factory->forClass(FooBar::class);
 In here:
 
 * `$source` is an implementation of `Jasny\Meta\Source\SourceInterface` - to obtain metadata from class and return it as associative array
-* `$cache` is an implementation of `Psr\SimpleCache\CacheInterface` - to handle caching meta (interface is defined in [PHP FIG Simple Cache](https://github.com/php-fig/simple-cache))
+* `$cache` is an implementation of `Jasny\Meta\CacheInterface` - to handle caching meta
 * `$meta` returned is an instance of `Jasny\Meta\MetaClass`.
 
 Lets look closely at all of those.
@@ -221,7 +221,7 @@ As you see, meta, obtained by means of `$phpdocSource` and `$reflectionSource`, 
 Caching
 ---
 
-The second parameter to pass to factory constructor is an instance of `Psr\SimpleCache\CacheInterface`. It is used to cache metadata between calls for the same class name.
+The second parameter to pass to factory constructor is an instance of `Jasny\Meta\CacheInterface`. It is used to cache metadata between calls for the same class name.
 
 We have two implementations of cache:
 
