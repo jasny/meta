@@ -1,13 +1,15 @@
 <?php
 
-namespace Jasny\Meta;
+declare(strict_types=1);
+
+namespace Jasny\Meta\Cache;
 
 use Jasny\Meta\MetaClass;
 
 /**
  * Caching MetaClass
  */
-interface Cache
+interface CacheInterface
 {
     /**
      * Store meta in cache
@@ -16,7 +18,7 @@ interface Cache
      * @param MetaClass   $meta
      * @return void
      */
-    public function set($key, MetaClass $meta);
+    public function set($key, MetaClass $meta): void;
 
     /**
      * Get meta from cache
@@ -32,5 +34,5 @@ interface Cache
      * @param string $key
      * @return boolean
      */
-    public function has($key);
+    public function has($key): bool;
 }

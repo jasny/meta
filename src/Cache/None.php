@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jasny\Meta\Cache;
 
-use Jasny\Meta\Cache;
 use Jasny\Meta\MetaClass;
 
 /**
  * Don't cache meta
  */
-class None implements Cache
+class None implements CacheInterface
 {
     /**
      * No caching here
@@ -17,7 +18,7 @@ class None implements Cache
      * @param MetaClass   $meta
      * @return void
      */
-    public function set($key, MetaClass $meta)
+    public function set($key, MetaClass $meta): void
     {
     }
 
@@ -38,7 +39,7 @@ class None implements Cache
      * @param string $key
      * @return false
      */
-    public function has($key)
+    public function has($key): bool
     {
         return false;
     }
